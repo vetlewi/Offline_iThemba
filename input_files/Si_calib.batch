@@ -1,0 +1,43 @@
+# Importing the gain shit information.
+Gain file /Users/vetlewi/Documents/coding/offlineiThemba/input_files/Gain_shift_zeros.dat
+
+range /Users/vetlewi/Documents/coding/offlineiThemba/input_files/zrange_p.dat
+
+parameter thick_range = 120 160
+
+#parameter ex_from_ede = \
+#17.839431 -1.048925 -0.000605 \
+#17.841066 -1.046072 -0.000668 \
+#17.843065 -1.043250 -0.000727 \
+#17.844440 -1.040309 -0.000787 \
+#17.843421 -1.036914 -0.000862 \
+#17.842488 -1.033552 -0.000933 \
+#17.840488 -1.030053 -0.001005 \
+#17.836852 -1.026316 -0.001082
+
+parameter labr_time_cuts = -4.0 4.0 40.0 48.0
+
+
+# Now we will need to read files... There is a lot of the :O
+data directory /Volumes/PR282/PR282
+
+parameter shift_time_e = \
+-217.099	-216.664	-217.187	-217.134	-216.154	-216.516	-216.516	-216.974	\
+-216.903	-222.75		-216.21		-222.18		-216.863	-220.805	-216.53		-222.428
+
+parameter shift_time_de_ring = \
+-151.389	-141.051	-140.427	-141.782	-141.829	-141.444	-141.151	-141.286	\
+-150.79		-140.792	-141.432	-143.587	-151.606	-141.78		-141.524	-141.588	\
+-138.732	-138.732	-149.64		-138.732	-150.189	-138.732	-149.292	-185.87		\
+-150.656	-94.6811	-151.672	-190.564	-151.53		-188.529	-157.442	-188.529	\
+-162.59		-188.271	-152.519	-190.302	-150.568	-190.488	-153.576	-190.234	\
+-159.554	-189.571	-151.099	-191.03		-190.5		-191.237	-152.735	-190.936
+
+parameter shift_time_de_sect = \
+-142.806	-142.256	-142.766	-142.923	-142.462	-144.575	-148.874	-143.499	\
+-143.734	-144.003	-142.908	-143.015	-144.77		-144.658	-142.567	-141.978
+
+data file R77_0
+
+
+export root /Users/vetlewi/Documents/coding/OfflineiThemba/output_files/Si_calib.root
