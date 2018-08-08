@@ -23,13 +23,33 @@ void Event::PackEvent(const WordBuffer *buffer, int start, int stop)
             }
             break;
         }
-        case labr: {
-            if ( n_labr[dinfo.detectorNum] < MAX_WORDS_PER_DET &&
-                 dinfo.detectorNum < NUM_LABR_DETECTORS){
-                w_labr[dinfo.detectorNum][n_labr[dinfo.detectorNum]++] = (*buffer)[i];
-                ++tot_labr;
+        case labr_3x8: {
+            if ( n_labr_3x8[dinfo.detectorNum] < MAX_WORDS_PER_DET &&
+                 dinfo.detectorNum < NUM_LABR_3X8_DETECTORS){
+                w_labr_3x8[dinfo.detectorNum][n_labr_3x8[dinfo.detectorNum]++] = (*buffer)[i];
+                ++tot_labr_3x8;
             } else {
-                std::cerr << __PRETTY_FUNCTION__ << ": Could not populate LaBr word, run debugger with appropriate break point for more details" << std::endl;
+                std::cerr << __PRETTY_FUNCTION__ << ": Could not populate 3.5x8 LaBr word, run debugger with appropriate break point for more details" << std::endl;
+            }
+            break;
+        }
+        case labr_2x2_ss: {
+            if ( n_labr_2x2_ss[dinfo.detectorNum] < MAX_WORDS_PER_DET &&
+                 dinfo.detectorNum < NUM_LABR_2X2_DETECTORS){
+                w_labr_2x2_ss[dinfo.detectorNum][n_labr_2x2_ss[dinfo.detectorNum]++] = (*buffer)[i];
+                ++tot_labr_2x2_ss;
+            } else {
+                std::cerr << __PRETTY_FUNCTION__ << ": Could not populate 2x2 LaBr word (slow), run debugger with appropriate break point for more details" << std::endl;
+            }
+            break;
+        }
+        case labr_2x2_fs: {
+            if ( n_labr_2x2_fs[dinfo.detectorNum] < MAX_WORDS_PER_DET &&
+                 dinfo.detectorNum < NUM_LABR_2X2_DETECTORS){
+                w_labr_2x2_fs[dinfo.detectorNum][n_labr_2x2_fs[dinfo.detectorNum]++] = (*buffer)[i];
+                ++tot_labr_2x2_fs;
+            } else {
+                std::cerr << __PRETTY_FUNCTION__ << ": Could not populate 2x2 LaBr word (fast), run debugger with appropriate break point for more details" << std::endl;
             }
             break;
         }

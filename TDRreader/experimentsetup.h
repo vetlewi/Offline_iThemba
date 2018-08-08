@@ -4,12 +4,13 @@
 // Currently the sorting rutine will only support dE-E silicon telescopes.
 // This may change in the future if needed... I think...
 
-#define NUM_CLOVER_DETECTORS 10 //!< Number of Clover detectors
-#define NUM_CLOVER_CRYSTALS 4   //!< Number of Clover crystals per detector
-#define NUM_LABR_DETECTORS 32   //!< Number of LaBr detectors
-#define NUM_SI_DE_RING 48       //!< Number of Si dE rings
-#define NUM_SI_DE_SECT 16       //!< Number of Si dE sector
-#define NUM_SI_E_DET 16         //!< Number of E Si sections
+#define NUM_CLOVER_DETECTORS 10     //!< Number of Clover detectors
+#define NUM_CLOVER_CRYSTALS 4       //!< Number of Clover crystals per detector
+#define NUM_LABR_3X8_DETECTORS 2    //!< Number of LaBr detectors
+#define NUM_LABR_2X2_DETECTORS 6    //!< Number of LaBr detectors
+#define NUM_SI_DE_RING 48           //!< Number of Si dE rings
+#define NUM_SI_DE_SECT 16           //!< Number of Si dE sector
+#define NUM_SI_E_DET 16             //!< Number of E Si sections
 
 #define NUM_SI_RINGS 48         //!< Number of Si rings
 
@@ -25,14 +26,16 @@ extern "C" {
 #include <stdint.h>
 
 enum DetectorType {
-    invalid,    //!< Invalid address
-    labr,       //!< Is a labr detector
-    clover,     //!< Is a clover crystal
-    deDet_ring, //!< Is a Delta-E ring
-    deDet_sect, //!< Is a Delta-E sector
-    eDet,       //!< Is a E detector
-    rfchan,     //!< Is a RF channel
-    unused      //!< Is a unused XIA channel
+    invalid,        //!< Invalid address
+    labr_3x8,       //!< Is a 3.5x8 inch labr detector
+    labr_2x2_ss,    //!< Is a 2x2 labr detector, slow signal
+    labr_2x2_fs,    //!< Is a 2x2 labr detector, fast signal
+    clover,         //!< Is a clover crystal
+    deDet_ring,     //!< Is a Delta-E ring
+    deDet_sect,     //!< Is a Delta-E sector
+    eDet,           //!< Is a E detector
+    rfchan,         //!< Is a RF channel
+    unused          //!< Is a unused XIA channel
 };
 
 enum ADCSamplingFreq {

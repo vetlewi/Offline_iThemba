@@ -71,21 +71,24 @@ private:
                           const double &excitation, /*!< We need the reconstructed excitation energy    */
                           const Event &event        /*!< Event structure.                               */);
 
-    // SINGLES histograms.
-    Histogram1Dp energy_labr_raw[NUM_LABR_DETECTORS], energy_labr[NUM_LABR_DETECTORS];
+    // SINGLES energy histograms.
+    Histogram1Dp energy_clover_raw[NUM_CLOVER_DETECTORS][NUM_CLOVER_CRYSTALS], energy_clover[NUM_CLOVER_DETECTORS][NUM_CLOVER_CRYSTALS];
+    Histogram1Dp energy_labr_3x8_raw[NUM_LABR_3X8_DETECTORS], energy_labr_3x8[NUM_LABR_3X8_DETECTORS];
+    Histogram1Dp energy_labr_2x2_ss_raw[NUM_LABR_2X2_DETECTORS], energy_labr_2x2_ss[NUM_LABR_2X2_DETECTORS];
+    Histogram1Dp energy_labr_2x2_fs_raw[NUM_LABR_2X2_DETECTORS], energy_labr_2x2_fs[NUM_LABR_2X2_DETECTORS];
     Histogram1Dp energy_dE_ring_raw[NUM_SI_DE_RING], energy_dE_ring[NUM_SI_DE_RING];
     Histogram1Dp energy_dE_sect_raw[NUM_SI_DE_RING], energy_dE_sect[NUM_SI_DE_RING];
     Histogram1Dp energy_E_raw[NUM_SI_E_DET], energy_E[NUM_SI_E_DET];
 
-    // Time spectra.
-    Histogram2Dp e_de_time[NUM_SI_E_DET]; // This will be a time : dE ring spectrum.
-    Histogram2Dp de_ring_align_time, de_sect_align_time, e_align_time;  // LaBr 0 as start? and dE as start. For aligning the dE detectors. Axis is x: time, y: dE detector nr.
-    Histogram2Dp labr_align_time;  // LaBr as stop and dE as start. For aligning the LaBr detectors. Axis is x: time, y: LaBr detector nr.
-    Histogram2Dp ppac_align_time;   // LaBr 0 as start and PPAC as stop. For aligning the PPACs.
-    Histogram2Dp energy_time_labr[NUM_LABR_DETECTORS], energy_time_labr_above[NUM_LABR_DETECTORS];
+    // Time alignment spectra
+    Histogram2Dp align_time_clover[NUM_CLOVER_DETECTORS];
+    Histogram2Dp align_time_labr_3x8;
+    Histogram2Dp align_time_labr_2x2_ss, align_time_labr_2x2_fs;
+    Histogram2Dp align_time_de_ring, align_time_de_sect;
+    Histogram2Dp align_time_e;
 
-    Histogram2Dp energy_time_labr_all;  // Energy vs. time in labr for all labr detectors.
-    Histogram2Dp de_ring_e_time, de_sect_e_time;
+    // Prompt time spectra
+    Histogram2Dp prompt_de_ring, prompt_de_sect;
 
     // dE vs E
     Histogram2Dp ede_raw[NUM_SI_E_DET][NUM_SI_RINGS], ede[NUM_SI_E_DET][NUM_SI_RINGS];
@@ -95,7 +98,7 @@ private:
     Histogram1Dp h_thick;   // "Apparent" thickness spectra.
     Histogram1Dp h_ede[NUM_SI_E_DET][NUM_SI_RINGS], h_ede_all; // Total energy deposited after particle gate.
     Histogram1Dp h_ex[NUM_SI_E_DET][NUM_SI_RINGS], h_ex_all; // Excitation energy.
-
+    Histogram1Dp h_ede_ring[NUM_SI_DE_RING];
 
     // Particle - gamma-ray coincidence matrix
     Histogram2Dp alfna, alfna_bg;
@@ -108,11 +111,23 @@ private:
     // Shift clover
     Parameter shift_clover;
 
-    // Gain labr
-    Parameter gain_labr;
+    // Gain labr 3.5x8
+    Parameter gain_labr_3x8;
 
-    // Shift labr
-    Parameter shift_labr;
+    // Shift labr 3.5x8
+    Parameter shift_labr_3x8;
+
+    // Gain labr 2x2, slow signal
+    Parameter gain_labr_2x2_ss;
+
+    // Shift labr 2x2, slow signal
+    Parameter shift_labr_2x2_ss;
+
+    // Gain labr 2x2, fast signal
+    Parameter gain_labr_2x2_fs;
+
+    // Shift labr 2x2, fast signal
+    Parameter shift_labr_2x2_fs;
 
     // Gain dE ring
     Parameter gain_dE_ring;
@@ -135,8 +150,14 @@ private:
     // Time alignment clover
     Parameter shift_time_clover;
 
-    // Time alignment LaBr
-    Parameter shift_time_labr;
+    // Time alignment LaBr 3.5x8
+    Parameter shift_time_labr_3x8;
+
+    // Time alignment LaBr 2x2, slow signal
+    Parameter shift_time_labr_2x2_ss;
+
+    // Time alignment LaBr 2x2, fast signal
+    Parameter shift_time_labr_2x2_fs;
 
     // Time alignment dE
     Parameter shift_time_de_ring;
@@ -153,11 +174,20 @@ private:
     // Apparent thickness gate SiRi
     Parameter thick_range;
 
-    // Time gates for the LaBr detectors, e.g. for making the ALFNA matrices
-    Parameter labr_time_cuts;
+    // Time gates for the LaBr 3.5x8 detectors, e.g. for making the ALFNA matrices
+    Parameter labr_3x8_time_cuts;
 
-    // Time gates for the ppacs.
-    Parameter ppac_time_cuts;
+    // Time gates for the LaBr 2x2 (slow) detectors, e.g. for making the ALFNA matrices
+    Parameter labr_2x2_ss_time_cuts;
+
+    // Time gates for the LaBr 2x2 (fast) detectors, e.g. for making the ALFNA matrices
+    Parameter labr_2x2_fs_time_cuts;
+
+    // Time gates for the dE ring.
+    Parameter particle_ring_cuts;
+
+    // Time gates for the dE sector.
+    Parameter particle_sect_cuts;
 
 
     int n_fail_de_ring, n_fail_de_sect, n_fail_e;

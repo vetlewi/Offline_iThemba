@@ -1,9 +1,9 @@
 # Importing the gain shit information.
-Gain file /Users/vetlewi/Documents/coding/offlineiThemba/input_files/Gain_shift_zeros.dat
+Gain file /Users/vetlewi/Documents/coding/offline_iThemba/input_files/Gain_shift_64Ni_run.dat
 
-range /Users/vetlewi/Documents/coding/offlineiThemba/input_files/zrange_p.dat
+range /Users/vetlewi/Documents/coding/offline_iThemba/input_files/zrange_d.dat
 
-parameter thick_range = 120 160
+parameter thick_range = 190 290
 
 #parameter ex_from_ede = \
 #17.839431 -1.048925 -0.000605 \
@@ -15,8 +15,9 @@ parameter thick_range = 120 160
 #17.840488 -1.030053 -0.001005 \
 #17.836852 -1.026316 -0.001082
 
-parameter labr_time_cuts = -4.0 4.0 40.0 48.0
-
+parameter labr_3x8_time_cuts = -4.0 4.0 40.0 48.0
+parameter particle_ring_cuts = -4.0 4.0 50.0 60.0
+parameter particle_sect_cuts = -4.0 4.0 50.0 60.0
 
 # Now we will need to read files... There is a lot of the :O
 data directory /Volumes/PR282/PR282
@@ -38,6 +39,14 @@ parameter shift_time_de_sect = \
 -143.734	-144.003	-142.908	-143.015	-144.77		-144.658	-142.567	-141.978
 
 data file R77_0
+data file R77_1
+data file R77_2
+data file R77_3
+data file R77_4
+data file R77_5
+data file R77_6
+data file R77_7
+data file R77_8
+data file R77_9
 
-
-export root /Users/vetlewi/Documents/coding/OfflineiThemba/output_files/Si_calib.root
+export root /Users/vetlewi/Documents/coding/Offline_iThemba/output_files/Si_calib.root

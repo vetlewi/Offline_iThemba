@@ -42,9 +42,17 @@ struct Event {
     int n_clover[NUM_CLOVER_DETECTORS][NUM_CLOVER_CRYSTALS];                        //!< Number of CLOVER words populated
     int tot_clover;                                                                 //!< Total number of CLOVER words in the event
 
-    word_t w_labr[NUM_LABR_DETECTORS][MAX_WORDS_PER_DET];   //!< Array to contain LaBr words
-    int n_labr[NUM_LABR_DETECTORS];                         //!< Number of LaBr words populated
-    int tot_labr;                                           //!< Total number of LaBr words in the event
+    word_t w_labr_3x8[NUM_LABR_3X8_DETECTORS][MAX_WORDS_PER_DET];   //!< Array to contain 3.5x8 LaBr words
+    int n_labr_3x8[NUM_LABR_3X8_DETECTORS];                         //!< Number of 3.5x8 LaBr words populated
+    int tot_labr_3x8;                                               //!< Total number of 3.5x8 LaBr words in the event
+
+    word_t w_labr_2x2_ss[NUM_LABR_2X2_DETECTORS][MAX_WORDS_PER_DET];    //!< Array to contain 2x2 LaBr words, slow signal
+    int n_labr_2x2_ss[NUM_LABR_2X2_DETECTORS];                          //!< Number of 2x2 LaBr words populated, slow signal
+    int tot_labr_2x2_ss;                                                //!< Total number of 2x2 LaBr words in the event, slow signal
+
+    word_t w_labr_2x2_fs[NUM_LABR_2X2_DETECTORS][MAX_WORDS_PER_DET];    //!< Array to contain 2x2 LaBr words, fast signal
+    int n_labr_2x2_fs[NUM_LABR_2X2_DETECTORS];                          //!< Number of 2x2 LaBr words populated, fast signal
+    int tot_labr_2x2_fs;                                                //!< Total number of 2x2 LaBr words in the event, fast signal
 
     word_t w_dEdet_ring[NUM_SI_DE_RING][MAX_WORDS_PER_DET];       //!< Array to contain Si words from the dE rings
     int n_dEdet_ring[NUM_SI_DE_RING];                            //!< Number of Si words populated from the dE rings
@@ -86,10 +94,22 @@ struct Event {
                 n_clover[i][j] = 0;
         }
 
-        // Clearing all LaBr counters
-        tot_labr = 0;
-        for (i = 0 ; i < NUM_LABR_DETECTORS ; ++i) {
-            n_labr[i] = 0;
+        // Clearing all 3.5x8 LaBr counters
+        tot_labr_3x8 = 0;
+        for (i = 0 ; i < NUM_LABR_3X8_DETECTORS ; ++i) {
+            n_labr_3x8[i] = 0;
+        }
+
+        // Clearing all 2x2 LaBr counters, slow signal
+        tot_labr_2x2_ss = 0;
+        for (i = 0 ; i < NUM_LABR_2X2_DETECTORS ; ++i) {
+            n_labr_2x2_ss[i] = 0;
+        }
+
+        // Clearing all 2x2 LaBr counters, fast signal
+        tot_labr_2x2_fs = 0;
+        for (i = 0 ; i < NUM_LABR_2X2_DETECTORS ; ++i) {
+            n_labr_2x2_fs[i] = 0;
         }
 
         // Clearing dE rings
