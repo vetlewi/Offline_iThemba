@@ -38,7 +38,7 @@
 #include <string>
 #include <cstdlib>
 
-#define GAP_SIZE 1000
+#define GAP_SIZE 3000
 
 Unpacker::Unpacker()
 	: buffer( 0 )
@@ -127,7 +127,7 @@ bool Unpacker::UnpackOneEvent(Event& event, int& n_data)
             }
         }
         curr_Buf = stop;
-        event.PackEvent(event, start, stop);
+        event.PackEvent(buffer, start, stop);
         return true;
 }
 #else

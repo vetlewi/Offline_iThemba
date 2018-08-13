@@ -2,9 +2,9 @@
 
 void GetPeaks_LaBr()
 {
-	TFile *file = TFile::Open("Pu_test.root");
+	TFile *file = TFile::Open("Si_calib.root");
 
-	TH2 *m = (TH2 *)file->Get("labr_align_time");
+	TH2 *m = (TH2 *)file->Get("align_time_clover_09");
 
 	TSpectrum spec;
 
@@ -13,7 +13,7 @@ void GetPeaks_LaBr()
 	double peakPos[1024];
 
 
-	for (int i = 1 ; i < 33 ; ++i ){
+	for (int i = 1 ; i < 5 ; ++i ){
 		sprintf(tmp, "px_%d", i);
 		TH1 *h = m->ProjectionX(tmp, i, i);
 		h->Draw();
@@ -36,12 +36,12 @@ void GetPeaks_LaBr()
 	}
 	int n = 1;
 	cout << "0 ";
-	for (int i = 1 ; i < 32 ; ++i){
+	for (int i = 0 ; i < 4 ; ++i){
 		if ( i / 16 == n ){
 			cout << '\\' << endl;
 			++n;
 		}
-		cout << -peakPos[i] << " ";
+		cout << -peakPos[i] << "\t";
 	}
 
 	cout << endl;

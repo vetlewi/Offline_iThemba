@@ -4,7 +4,7 @@ void GetPeaks()
 {
 	TFile *file = TFile::Open("Si_calib.root");
 
-	TH2 *m = (TH2 *)file->Get("de_sect_align_time");
+	TH2 *m = (TH2 *)file->Get("align_time_e");
 
 	TSpectrum spec;
 

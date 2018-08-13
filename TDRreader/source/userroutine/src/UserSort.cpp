@@ -40,7 +40,12 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define FISSION 0
+typedef struct {
+    double energy;  //!< Energy of the event
+    int clover_no;  //!< Clover ID.
+    int crystal_no; //!< Crystal number (with largest energy deposition)
+    word_t max_w;   //!< Word of the hit with the largest energy.
+} clover_gamma_t;
 
 static bool set_par(Parameters& parameters, std::istream& ipar,
                     const std::string& name, int size)
@@ -114,6 +119,7 @@ UserSort::UserSort()
     , labr_3x8_time_cuts  ( GetParameters(), "labr_3x8_time_cuts", 2*2  )
     , labr_2x2_ss_time_cuts  ( GetParameters(), "labr_2x2_ss_time_cuts", 2*2  )
     , labr_2x2_fs_time_cuts  ( GetParameters(), "labr_2x2_fs_time_cuts", 2*2  )
+    , clover_addback_cuts( GetParameters(), "clover_addback_cuts", 2*2 )
     , particle_ring_cuts ( GetParameters(), "particle_ring_cuts", 2*2 )
     , particle_sect_cuts ( GetParameters(), "particle_sect_cuts", 2*2 )
 {
@@ -123,35 +129,45 @@ UserSort::UserSort()
 double UserSort::CalibrateE(const word_t &w) const
 {
     DetectorInfo_t info = GetDetector(w.address);
+    double result = 0;
     switch ( info.type ) {
     case clover : {
-        return gain_clover[info.detectorNum*NUM_CLOVER_DETECTORS + info.telNum]*(w.adcdata + drand48() - 0.5) + shift_clover[info.detectorNum*NUM_CLOVER_DETECTORS + info.telNum];
+        result = gain_clover[info.detectorNum*NUM_CLOVER_CRYSTALS + info.telNum]*(w.adcdata + drand48() - 0.5) + shift_clover[info.detectorNum*NUM_CLOVER_CRYSTALS + info.telNum];
+        break;
     }
     case labr_3x8 : {
-        return gain_labr_3x8[info.detectorNum]*(w.adcdata + drand48() - 0.5) + shift_labr_3x8[info.detectorNum];
+        result = gain_labr_3x8[info.detectorNum]*(w.adcdata + drand48() - 0.5) + shift_labr_3x8[info.detectorNum];
+        break;
     }
     case labr_2x2_ss : {
-        return gain_labr_2x2_ss[info.detectorNum]*(w.adcdata + drand48() - 0.5) + shift_labr_2x2_ss[info.detectorNum];
+        result = gain_labr_2x2_ss[info.detectorNum]*(w.adcdata + drand48() - 0.5) + shift_labr_2x2_ss[info.detectorNum];
+        break;
     }
     case labr_2x2_fs : {
-        return gain_labr_2x2_fs[info.detectorNum]*(w.adcdata + drand48() - 0.5) + shift_labr_2x2_fs[info.detectorNum];
+        result = gain_labr_2x2_fs[info.detectorNum]*(w.adcdata + drand48() - 0.5) + shift_labr_2x2_fs[info.detectorNum];
+        break;
     }
     case deDet_ring : {
-        return gain_dE_ring[info.detectorNum]*(w.adcdata + drand48() - 0.5) + shift_dE_ring[info.detectorNum];
+        result = gain_dE_ring[info.detectorNum]*(w.adcdata + drand48() - 0.5) + shift_dE_ring[info.detectorNum];
+        break;
     }
     case deDet_sect : {
-        return gain_dE_sect[info.detectorNum]*(w.adcdata + drand48() - 0.5) + shift_dE_sect[info.detectorNum];
+        result = gain_dE_sect[info.detectorNum]*(w.adcdata + drand48() - 0.5) + shift_dE_sect[info.detectorNum];
+        break;
     }
     case eDet : {
-        return gain_E[info.detectorNum]*(w.adcdata + drand48() - 0.5) + shift_E[info.detectorNum];
+        result = gain_E[info.detectorNum]*(w.adcdata + drand48() - 0.5) + shift_E[info.detectorNum];
+        break;
     }
-
     case rfchan : {
-        return w.adcdata;
+        result = w.adcdata;
+        break;
     }
     default:
-        return w.adcdata;
+        result = w.adcdata;
+        break;
     }
+    return result;
 }
 
 double UserSort::CalcTimediff(const word_t &start, const word_t &stop) const
@@ -373,7 +389,7 @@ void UserSort::CreateSpectra()
             // Make the 'raw' ede spectrum.
             sprintf(tmp, "ede_raw_b%02d_f%02d", i, j);
             sprintf(tmp2, "E : DE raw, pad %d, ring %d", i, j);
-            ede_raw[i][j] = Mat(tmp, tmp2, 500, 0, 16384, "Back energy [ch]", 500, 0, 16384, "Front energy [ch]");
+            ede_raw[i][j] = Mat(tmp, tmp2, 500, 0, 8000, "Back energy [ch]", 500, 0, 8000, "Front energy [ch]");
 
             // Make 'calibrated' ede spectrum.
             sprintf(tmp, "ede_b%02d_f%02d", i, j);
@@ -401,6 +417,12 @@ void UserSort::CreateSpectra()
     for (int i = 0 ; i < NUM_CLOVER_DETECTORS ; ++i){
         sprintf(tmp, "align_time_clover_%02d", i+1);
         align_time_clover[i] = Mat(tmp, tmp, num_align_bins, align_low_bin, align_hig_bin, "t_{CLOVER} - t_{common} [ns]", NUM_CLOVER_CRYSTALS, 0, NUM_CLOVER_CRYSTALS, "CLOVER crystal id.");
+
+        sprintf(tmp, "time_clover_addback_%02d", i+1);
+        time_clover_addback[i] = Mat(tmp, tmp, num_align_bins, align_low_bin, align_hig_bin, "t_{CLOVER} - t_{start} [ns]", NUM_CLOVER_CRYSTALS, 0, NUM_CLOVER_CRYSTALS, "CLOVER crystal id.");
+
+        sprintf(tmp, "energy_clover_addback_%02d", i+1);
+        energy_clover_addback[i] = Spec(tmp, tmp, 10000, 0, 10000, "Energy [keV]");
     }
 
     sprintf(tmp, "align_time_labr_3x8");
@@ -426,6 +448,9 @@ void UserSort::CreateSpectra()
 
     sprintf(tmp, "prompt_de_sect");
     prompt_de_sect = Mat(tmp, tmp, num_align_bins, align_low_bin, align_hig_bin, "t_{#Delta E sector} - t_{E trigger} [ns]", NUM_SI_DE_SECT, 0, NUM_SI_DE_SECT, "#Delta E sector detector id.");
+
+    sprintf(tmp, "prompt_labr_3x8");
+    prompt_labr_3x8 = Mat(tmp, tmp, num_align_bins, align_low_bin, align_hig_bin, "t_{LaBr} - t_{Particle} [ns]", NUM_LABR_3X8_DETECTORS, 0, NUM_LABR_3X8_DETECTORS, "LaBr 3.5x8 detector id.");
 
     sprintf(tmp, "ede_all");
     sprintf(tmp2, "E : DE, all");
@@ -469,6 +494,15 @@ bool UserSort::Sort(const Event &event)
     double energy;
     double tdiff;
 
+    bool have_been_counted[NUM_CLOVER_DETECTORS][NUM_CLOVER_CRYSTALS][MAX_WORDS_PER_DET];
+    for (i = 0 ; i < NUM_CLOVER_DETECTORS ; ++i){
+        for (j = 0 ; j < NUM_CLOVER_CRYSTALS ; ++j){
+            for (k = 0 ; k < MAX_WORDS_PER_DET ; ++k){
+                have_been_counted[i][j][k] = false;
+            }
+        }
+    }
+
     n_tot_e += event.tot_Edet;
     n_tot_de_ring += event.tot_dEdet_ring;
     n_tot_de_sect += event.tot_dEdet_sect;
@@ -481,7 +515,11 @@ bool UserSort::Sort(const Event &event)
     word_t de_words[256]; // List of dE hits from pads in front of the trigger E word.
     int n_de_words=0;
 
+    clover_gamma_t clover_gamma[256];
+    int n_clover_gamma = 0;
+
     for ( i = 0 ; i < NUM_CLOVER_DETECTORS ; ++i ){
+
         for ( j = 0 ; j < NUM_CLOVER_CRYSTALS ; ++j ){
             for (k = 0 ; k < event.n_clover[i][j] ; ++k){
                 energy_clover_raw[i][j]->Fill(event.w_clover[i][j][k].adcdata);
@@ -491,6 +529,71 @@ bool UserSort::Sort(const Event &event)
                 if (have_alginment_data){
                     tdiff = CalcTimediff(start_alignment_word, event.w_clover[i][j][k]);
                     align_time_clover[i]->Fill(tdiff, j);
+                }
+            }
+        }
+
+        if (event.tot_clover[i] == 1){ // Only single, fill time and energy spectra as usual.
+
+            for (j = 0 ; j < NUM_CLOVER_CRYSTALS ; ++j ){
+                for ( k = 0 ; k < event.n_clover[i][j] ; ++k ){
+                    if ( have_been_counted[i][j][k] ) // This should never be true, but check anyway
+                        continue; // Skip to next word.
+                    have_been_counted[i][j][k] = true;
+                    clover_gamma[n_clover_gamma].clover_no = i;
+                    clover_gamma[n_clover_gamma].crystal_no = j;
+                    clover_gamma[n_clover_gamma].energy = CalibrateE(event.w_clover[i][j][k]);
+                    clover_gamma[n_clover_gamma++].max_w = event.w_clover[i][j][k];
+                    energy_clover_addback[i]->Fill(CalibrateE(event.w_clover[i][j][k]));
+
+                }
+            }
+
+        } else { // Addback! We fill 'singles' spectra for the individual crystals and the 'addback' spectra!
+
+            for ( j = 0 ; j < NUM_CLOVER_CRYSTALS ; ++j ){
+                for ( k = 0 ; k < event.n_clover[i][j] ; ++k ){
+
+                    // First we check if we have analyzed this particular word previously.
+                    if ( have_been_counted[i][j][k] )
+                        continue; // Skip to next word.
+
+                    have_been_counted[i][j][k] = true;
+                    energy = CalibrateE(event.w_clover[i][j][k]);
+                    double max_energy = energy;
+                    int max_c = j;
+                    word_t max_word = event.w_clover[i][j][k];
+
+                    for ( int n = 0 ; n < NUM_CLOVER_CRYSTALS ; ++n ){
+                        if ( n == j )
+                            continue;
+                        for (  int m = 0 ; m < event.n_clover[i][n] ; ++m ){
+
+                            // Increment the time spectrum!
+                            tdiff = CalcTimediff(event.w_clover[i][j][k], event.w_clover[i][n][m]);
+                            time_clover_addback[i]->Fill(tdiff, n);
+
+                            if ( have_been_counted[i][n][m] ) // We always want to increment the time spectra, but not energies
+                                continue; // skip to next!
+
+                            if ( CheckTimeStatus(tdiff, clover_addback_cuts) == is_prompt ){
+                                double this_e = CalibrateE(event.w_clover[i][n][m]);
+                                energy += this_e;
+                                if (this_e > max_energy){
+                                    max_c = n;
+                                    max_word = event.w_clover[i][n][m];
+                                }
+                                have_been_counted[i][n][m] = true;
+                            }
+                        }
+                    }
+
+                    energy_clover_addback[i]->Fill(energy);
+                    clover_gamma[n_clover_gamma].clover_no = i;
+                    clover_gamma[n_clover_gamma].crystal_no = max_c;
+                    clover_gamma[n_clover_gamma].energy = energy;
+                    clover_gamma[n_clover_gamma++].max_w = max_word;
+
                 }
             }
         }
@@ -526,6 +629,7 @@ bool UserSort::Sort(const Event &event)
             energy_labr_2x2_fs_raw[i]->Fill(event.w_labr_2x2_fs[i][j].adcdata);
             energy = CalibrateE(event.w_labr_2x2_fs[i][j]);
             energy_labr_2x2_fs[i]->Fill(energy);
+
             // We align times
             if (have_alginment_data){
                 tdiff = CalcTimediff(start_alignment_word, event.w_labr_2x2_fs[i][j]);
@@ -547,9 +651,9 @@ bool UserSort::Sort(const Event &event)
             }
 
             // Check if bellongs to the 'trigger' event
-            tdiff = CalcTimediff(event.w_dEdet_ring[i][j], event.trigger);
+            tdiff = CalcTimediff(event.trigger, event.w_dEdet_ring[i][j]);
             prompt_de_ring->Fill(tdiff, i);
-            if ( CheckTimeStatus(tdiff, particle_ring_cuts) ){
+            if ( CheckTimeStatus(tdiff, particle_ring_cuts) /*== is_prompt*/ ){
                 de_words[n_de_words++] = event.w_dEdet_ring[i][j];
             }
 
@@ -571,9 +675,9 @@ bool UserSort::Sort(const Event &event)
             }
 
             // Check if bellongs to the 'trigger' event
-            tdiff = CalcTimediff(event.w_dEdet_sect[i][j], event.trigger);
+            tdiff = CalcTimediff(event.trigger, event.w_dEdet_sect[i][j]);
             prompt_de_sect->Fill(tdiff, i);
-            if ( CheckTimeStatus(tdiff, particle_sect_cuts) ){
+            if ( CheckTimeStatus(tdiff, particle_sect_cuts) /*== is_prompt*/ ){
                 de_words[n_de_words++] = event.w_dEdet_sect[i][j];
             }
 
@@ -599,22 +703,20 @@ bool UserSort::Sort(const Event &event)
         }
     }
 
-    // The total number of ring events have to be one or has to be correlated in
-    // time with the E detector... Maybe later... For now only one!
-    /*if ( event.tot_dEdet_ring == 1 && event.tot_dEdet_sect == 1 ){
+    n_de_words = 0;
+
+    if ( event.tot_dEdet_ring == 1 && event.tot_dEdet_sect == 1){
         for (int i = 0 ; i < NUM_SI_DE_RING ; ++i){
             for (int j = 0 ; j < event.n_dEdet_ring[i] ; ++j){
-                de_words[0] = event.w_dEdet_ring[i][j];
+                de_words[n_de_words++] = event.w_dEdet_ring[i][j];
             }
         }
         for (int i = 0 ; i < NUM_SI_DE_SECT ; ++i){
             for (int j = 0 ; j < event.n_dEdet_sect[i] ; ++j){
-                de_words[1] = event.w_dEdet_sect[i][j];
+                de_words[n_de_words++] = event.w_dEdet_sect[i][j];
             }
         }
-        n_de_words = 1;
-    }*/
-
+    }
 
 
     // Check if only one dE detector of the trapezoidal has fired.
@@ -641,11 +743,19 @@ bool UserSort::Sort(const Event &event)
 
         double thick = range.GetRange(e_energy + de_energy) - range.GetRange(e_energy);
 
-        h_thick->Fill(thick);
+        if (ring < 16 && sect_e == 0)
+            h_thick->Fill(thick);
 
         if (thick >= thick_range[0] && thick <= thick_range[1]){
             h_ede[sect_e][ring]->Fill(e_energy + de_energy);
             h_ede_ring[ring]->Fill(e_energy+de_energy);
+
+            double excitation = ex_from_ede[ring*3] + ex_from_ede[ring*3 + 1]*(e_energy + de_energy)*1e-3 + ex_from_ede[ring*3+2]*pow((e_energy + de_energy)*1e-3, 2);
+            excitation *= 1e3;
+            h_ex[sect_e][ring]->Fill(excitation);
+            h_ex_all->Fill(excitation);
+            AnalyzeGamma(de_word_s, excitation, event);
+
         }
 
 
@@ -658,24 +768,22 @@ bool UserSort::Sort(const Event &event)
 
 void UserSort::AnalyzeGamma(const word_t &de_word, const double &excitation,const Event &event)
 {
-/*
+
     // We will loop over all gamma-rays.
-    for (int i = 0 ; i < NUM_LABR_DETECTORS ; ++i){
-        for (int j = 0 ; j < event.n_labr[i] ; ++j){
+    for (int i = 0 ; i < NUM_LABR_3X8_DETECTORS ; ++i){
+        for (int j = 0 ; j < event.n_labr_3x8[i] ; ++j){
 
             // Get energy and time of the gamma-ray.
 
-            double energy = CalibrateE(event.w_labr[i][j]);
-            double tdiff = CalcTimediff(de_word, event.w_labr[i][j]);
+            double energy = CalibrateE(event.w_labr_3x8[i][j]);
+            double tdiff = CalcTimediff(de_word, event.w_labr_3x8[i][j]);
 
             // Fill time spectra.
-            labr_align_time->Fill(tdiff, i);
-            energy_time_labr[i]->Fill(energy, tdiff);
-            energy_time_labr_all->Fill(energy, tdiff);
+            prompt_labr_3x8->Fill(tdiff, i);
 
 
             // Check time gate.
-            switch ( CheckTimeStatus(tdiff, labr_time_cuts) ) {
+            switch ( CheckTimeStatus(tdiff, labr_3x8_time_cuts) ) {
                 case is_prompt : {
                     alfna->Fill(energy, excitation);
                     break;
@@ -691,7 +799,7 @@ void UserSort::AnalyzeGamma(const word_t &de_word, const double &excitation,cons
             }
         }
     }
-*/
+
     return;
 }
 

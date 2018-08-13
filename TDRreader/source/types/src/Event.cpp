@@ -16,8 +16,8 @@ void Event::PackEvent(const WordBuffer *buffer, int start, int stop)
         case clover: {
             if ( n_clover[dinfo.detectorNum][dinfo.telNum] < MAX_WORDS_PER_DET &&
                  dinfo.telNum < NUM_CLOVER_CRYSTALS && dinfo.detectorNum < NUM_CLOVER_DETECTORS){
-                w_clover[dinfo.detectorNum][dinfo.telNum][n_clover[dinfo.detectorNum][dinfo.telNum]++] = (*buffer)[i];
-                ++tot_clover;
+                w_clover[dinfo.detectorNum][dinfo.telNum][ n_clover[dinfo.detectorNum][dinfo.telNum]++ ] = (*buffer)[i];
+                ++tot_clover[dinfo.detectorNum];
             } else {
                 std::cerr << __PRETTY_FUNCTION__ << ": Could not populate Clover word, run debugger with appropriate break point for more details" << std::endl;
             }

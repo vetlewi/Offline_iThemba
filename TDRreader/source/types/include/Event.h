@@ -40,7 +40,7 @@ struct Event {
 
     word_t w_clover[NUM_CLOVER_DETECTORS][NUM_CLOVER_CRYSTALS][MAX_WORDS_PER_DET];  //!< Array to contain CLOVER words
     int n_clover[NUM_CLOVER_DETECTORS][NUM_CLOVER_CRYSTALS];                        //!< Number of CLOVER words populated
-    int tot_clover;                                                                 //!< Total number of CLOVER words in the event
+    int tot_clover[NUM_CLOVER_DETECTORS];                                           //!< Total number of CLOVER words in the event
 
     word_t w_labr_3x8[NUM_LABR_3X8_DETECTORS][MAX_WORDS_PER_DET];   //!< Array to contain 3.5x8 LaBr words
     int n_labr_3x8[NUM_LABR_3X8_DETECTORS];                         //!< Number of 3.5x8 LaBr words populated
@@ -88,8 +88,8 @@ struct Event {
         int i, j;
 
         // Clearing all Clover counters
-        tot_clover = 0;
         for (i = 0 ; i < NUM_CLOVER_DETECTORS ; ++i){
+            tot_clover[i] = 0;
             for (j = 0 ; j < NUM_CLOVER_DETECTORS ; ++j)
                 n_clover[i][j] = 0;
         }

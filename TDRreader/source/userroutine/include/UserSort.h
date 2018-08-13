@@ -87,8 +87,13 @@ private:
     Histogram2Dp align_time_de_ring, align_time_de_sect;
     Histogram2Dp align_time_e;
 
+    // Addback spectra
+    Histogram1Dp energy_clover_addback[NUM_CLOVER_DETECTORS];
+    Histogram2Dp time_clover_addback[NUM_CLOVER_DETECTORS];
+
     // Prompt time spectra
     Histogram2Dp prompt_de_ring, prompt_de_sect;
+    Histogram2Dp prompt_labr_3x8;
 
     // dE vs E
     Histogram2Dp ede_raw[NUM_SI_E_DET][NUM_SI_RINGS], ede[NUM_SI_E_DET][NUM_SI_RINGS];
@@ -182,6 +187,9 @@ private:
 
     // Time gates for the LaBr 2x2 (fast) detectors, e.g. for making the ALFNA matrices
     Parameter labr_2x2_fs_time_cuts;
+
+    // Time gates for the addback algorithm
+    Parameter clover_addback_cuts;
 
     // Time gates for the dE ring.
     Parameter particle_ring_cuts;
