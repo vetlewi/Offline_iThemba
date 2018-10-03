@@ -752,26 +752,6 @@ bool UserSort::Sort(const Event &event)
                         labr_2x2_fs_gg_e_t[i][n]->Fill(energy2, tdiff);
                 }
             }
-
-            // Check if the energy is within some gate.
-            if (energy >= 235 && energy <= 255){
-                // Loop over all other LaBr 2x2 detectors to check if any are in coincidence.
-                for (int n = 0 ; n < NUM_LABR_2X2_DETECTORS ; ++n){
-
-                    // We are only intrested in gammas in other detectors, so we will
-                    // have to skip when n == i.
-                    if ( i == n ) // Skip if same detector as the 245 keV "trigger"
-                        continue;
-
-                    for (int m = 0 ; m < event.n_labr_2x2_fs[n] ; ++m){
-
-                        double energy2 = CalibrateE(event.w_labr_2x2_fs[n][m]);
-                        // We assume that the 245 keV gamma is the start.
-                        tdiff = CalcTimediff(event.w_labr_2x2_fs[i][j], event.w_labr_2x2_fs[n][m]);
-                        labr_2x2_fs_gg_e_t[i][n]->Fill(energy2, tdiff);
-                    }
-                }
-            }
         }
     }
 
