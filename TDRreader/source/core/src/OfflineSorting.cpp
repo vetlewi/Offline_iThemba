@@ -285,8 +285,6 @@ bool OfflineSorting::export_command(std::istream& icmd)
         }
         RootWriter::Write( userSort.GetHistograms(), rootfile );
         std::cout << "export as ROOT file into '" << tmp << "'" << std::endl;
-        std::cout << "Resetting all histograms" << std::endl;
-        userSort.GetHistograms().ResetAll();
         return true;
     } else if (tmp == "mama"){
         icmd >> tmp;
@@ -351,6 +349,7 @@ bool OfflineSorting::next_command(const std::string& cmd)
     } else if ( name == "export" ){
         return export_command(icmd);
     } else if ( name == "reset_histograms"){
+        std::cout << "Resetting all histograms" << std::endl;
         userSort.GetHistograms().ResetAll();
         return true;
     } else {

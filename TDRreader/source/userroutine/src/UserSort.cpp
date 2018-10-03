@@ -389,7 +389,7 @@ void UserSort::CreateSpectra()
             // Make the 'raw' ede spectrum.
             sprintf(tmp, "ede_raw_b%02d_f%02d", i, j);
             sprintf(tmp2, "E : DE raw, pad %d, ring %d", i, j);
-            ede_raw[i][j] = Mat(tmp, tmp2, 500, 0, 8000, "Back energy [ch]", 500, 0, 8000, "Front energy [ch]");
+            ede_raw[i][j] = Mat(tmp, tmp2, 1000, 0, 6500, "Back energy [ch]", 1000, 0, 5500, "Front energy [ch]");
 
             // Make 'calibrated' ede spectrum.
             sprintf(tmp, "ede_b%02d_f%02d", i, j);

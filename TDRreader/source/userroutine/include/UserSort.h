@@ -198,10 +198,10 @@ private:
     Parameter particle_sect_cuts;
 
 
-    int n_fail_de_ring, n_fail_de_sect, n_fail_e;
+    int64_t n_fail_de_ring, n_fail_de_sect, n_fail_e;
 
-    int n_tot_e, n_tot_de_ring, n_tot_de_sect;
-    int tot;
+    int64_t n_tot_e, n_tot_de_ring, n_tot_de_sect;
+    int64_t tot;
 
 
 };

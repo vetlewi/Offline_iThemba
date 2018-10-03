@@ -187,7 +187,7 @@ bool Peaks2D::HandleExec()
         state = ZOOMING;
     }
     // BELOW: Hack by JEM to run NextDetector()    
-    else if( state == SHOWING && event == kKeyPress && eventx == 'u' ) {
+    else if( event == kKeyPress && eventx == 'u' ) {
         if( debug )
             cout << "end of show. FindMatrix()." << endl;
         DoNextDetector();
@@ -475,6 +475,9 @@ private:
     const char* outfilename;
     int iBack, iFront, iPeak;
     static const int nPeaks;
+    static const int nFront;
+    static const int nBack;
+
     ClassDef(Peaks_EDE,1);
 };
 ClassImp(Peaks_EDE);
@@ -492,7 +495,9 @@ Peaks_EDE::Peaks_EDE(const char* on, int back, int front, int peak)
 
 // ------------------------------------------------------------------------
 
-const int Peaks_EDE::nPeaks = 5;
+const int Peaks_EDE::nPeaks = 4;
+const int Peaks_EDE::nFront = 48;
+const int Peaks_EDE::nBack = 16;
 
 // ------------------------------------------------------------------------
 
@@ -506,13 +511,13 @@ TH2* Peaks_EDE::NextMatrix()
     if( iPeak >= nPeaks ) {
         iPeak = 0;
         iFront += 1;
-        if( iFront >= 16 ) {
+        if( iFront >= nFront ) {
             iFront = 0;
             iBack += 1;
         }
     }
     // check if everything is in range
-    if( iPeak<0 || iPeak>nPeaks || iBack<0 || iBack>0 || iFront<0 || iFront>16 ) {
+    if( iPeak<0 || iPeak>nPeaks || iBack<0 || iBack>nBack || iFront<0 || iFront>nFront ) {
         if( debug )
             cout << "Peaks_EDE::NextMatrix : out of range" << endl;
         return 0;
@@ -540,12 +545,12 @@ TH2* Peaks_EDE::NextDetector()
     // go to next front/back detector
     iPeak = 0;
     iFront += 1;
-    if( iFront >= 16 ) {
+    if( iFront >= nFront ) {
         iFront = 0;
         iBack += 1;
     }
     // check if everything is in range
-    if( iPeak<0 || iPeak>nPeaks || iBack<0 || iBack>0 || iFront<0 || iFront>16 ) {
+    if( iPeak<0 || iPeak>nPeaks || iBack<0 || iBack>nBack || iFront<0 || iFront>nFront ) {
         if( debug )
             cout << "Peaks_EDE::NextMatrix : out of range" << endl;
         return 0;
@@ -567,8 +572,8 @@ void Peaks_EDE::ShowPeak(double px2d, double py2d, double pxp, double pyp)
     DrawPeakCross(px2d,  py2d, pxp, pyp);
 
     // const char* peakname[nPeaks] = {"12C_0M", "12C_4M", "12C_9M" };
-    //const char* peakname[nPeaks] = {" ", " ", " ", " ", " ", " ", " ", " ", " ", " " }; // Unnecessary, I fill it with blanks - JEM
-    const char* peakname[nPeaks] = {"","","","",""};
+    //const char* peakname[nPeaks] = {"", " ", " ", " ", " ", " ", " ", " ", " ", " " }; // Unnecessary, I fill it with blanks - JEM
+    const char* peakname[nPeaks] = {"63Ni_0M","62Ni_0M","62Ni_1M","62Ni_2M"};
     if( iPeak==0 )
         cout << "\tb(2d)=" << iBack << "\tf(2d)=" << iFront
              << "\tb(proj)=" << iBack << "\tf(proj)=" << iFront << endl;
@@ -576,10 +581,10 @@ void Peaks_EDE::ShowPeak(double px2d, double py2d, double pxp, double pyp)
 
     if( outfilename ) {
         ofstream fout(outfilename, ios::app|ios::out);
-        if( iPeak==0 )
-            fout << "\tb(2d)=" << iBack << "\tf(2d)=" << iFront
-                 << "\tb(proj)=" << iBack << "\tf(proj)=" << iFront << endl;
-        fout << peakname[iPeak] << '\t' << px2d << '\t' << py2d << '\t' << pxp << '\t' << pyp << endl;
+        //if( iPeak==0 )
+        //    fout << "\tb(2d)=" << iBack << "\tf(2d)=" << iFront
+        //         << "\tb(proj)=" << iBack << "\tf(proj)=" << iFront << endl;
+        fout << peakname[iPeak] << '\t' << iBack << '\t' << iFront << '\t' << px2d << '\t' << py2d << '\t' << pxp << '\t' << pyp << endl;
     }
 }
 
