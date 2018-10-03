@@ -60,4 +60,4 @@ data file R137_0
 data file R137_1
 data file R137_2
 
-export /Users/vetlewi/Documents/coding/Offline_iThemba/output_files/Co60_end.root
+export root /Users/vetlewi/Documents/coding/Offline_iThemba/output_files/Co60_end.root
