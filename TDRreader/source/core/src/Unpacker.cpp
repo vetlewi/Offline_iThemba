@@ -77,35 +77,9 @@ Unpacker::Status Unpacker::Next(Event &event)
 
 	return OKAY;
 }
+
+
 #if SINGLES
-/*bool Unpacker::UnpackOneEvent(Event& event, int& n_data)
-{
-
-    event.Reset();
-
-        if ( curr_Buf >= buffer->GetSize() )
-            return false;
-
-        int64_t timediff;
-        int start = curr_Buf;
-        int stop = curr_Buf+1;
-        subevent_t sevt1 = subevent_t((*buffer)[curr_Buf]), sevt2;
-        for (size_t i = curr_Buf + 1 ; i < buffer->GetSize() ; ++i){
-            sevt2 = sevt1;
-            sevt1 = subevent_t((*buffer)[i]);
-            timediff = sevt1.timestamp - sevt2.timestamp;
-            if (timediff > GAP_SIZE){
-                stop = i;
-                curr_Buf = stop;
-                return PackEvent(event, start, stop);
-            }
-        }
-
-        stop = buffer->GetSize();
-        curr_Buf = stop;
-        event.PackEvent(event, start, stop);
-        return true;
-}*/
 
 bool Unpacker::UnpackOneEvent(Event& event, int& n_data)
 {
@@ -119,7 +93,7 @@ bool Unpacker::UnpackOneEvent(Event& event, int& n_data)
         int start = curr_Buf;
         int stop = curr_Buf+1;
 
-        for (int i = curr_Buf ; i < buffer->GetSize() ; ++i){
+        for (int i = curr_Buf ; i < buffer->GetSize() - 1 ; ++i){
             timediff = (*buffer)[i+1].timestamp - (*buffer)[curr_Buf].timestamp;
             if (timediff > GAP_SIZE){
                 stop = i+1;
@@ -128,9 +102,12 @@ bool Unpacker::UnpackOneEvent(Event& event, int& n_data)
         }
         curr_Buf = stop;
         event.PackEvent(buffer, start, stop);
+        n_data = event.length;
         return true;
 }
+
 #else
+
 bool Unpacker::UnpackOneEvent(Event& event, int& n_data)
 {
     event.Reset();

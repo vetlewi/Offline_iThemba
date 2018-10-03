@@ -204,7 +204,7 @@ private:
     Parameter particle_sect_cuts;
 
     // Energy gate for the first gamma in the energy vs. time spectrum
-    Parameter labr_2x2_E_cut;
+    Parameter labr_2x2_fs_E_cut;
 
 
 
