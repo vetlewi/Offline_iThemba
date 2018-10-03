@@ -748,6 +748,7 @@ bool UserSort::Sort(const Event &event)
                     if (CheckTimeStatus(tdiff, labr_2x2_fs_time_cuts) == is_prompt)
                         labr_2x2_fs_gg[i][n]->Fill(energy, energy2);
 
+                    // Check if the 'first' energy is within our energy gate.
                     if ( energy >= labr_2x2_fs_E_cut[0] && energy <= labr_2x2_fs_E_cut[1] )
                         labr_2x2_fs_gg_e_t[i][n]->Fill(energy2, tdiff);
                 }
