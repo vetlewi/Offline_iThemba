@@ -2,7 +2,7 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
-
+CONFIG+=sdk_no_version_check
 
 ROOTFLAGS = $$system( root-config --cflags )
 ROOTLIBS = $$system( root-config --glibs )

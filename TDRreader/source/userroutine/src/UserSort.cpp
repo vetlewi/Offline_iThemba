@@ -122,6 +122,7 @@ UserSort::UserSort()
     , clover_addback_cuts( GetParameters(), "clover_addback_cuts", 2*2 )
     , particle_ring_cuts ( GetParameters(), "particle_ring_cuts", 2*2 )
     , particle_sect_cuts ( GetParameters(), "particle_sect_cuts", 2*2 )
+    , labr_2x2_fs_E_cut( GetParameters(), "labr_2x2_fs_E_cut", 2)
 {
 }
 
@@ -301,7 +302,7 @@ bool UserSort::UserCommand(const std::string &cmd)
 
 void UserSort::CreateSpectra()
 {
-    char tmp[1024], tmp2[1024];;
+    char tmp[1024], tmp2[1024], tmp3[1024];
 
     for (int i = 0 ; i < NUM_CLOVER_DETECTORS ; ++i){
         for (int j = 0 ; j < NUM_CLOVER_CRYSTALS ; ++j){
@@ -338,6 +339,26 @@ void UserSort::CreateSpectra()
         energy_labr_2x2_ss[i] = Spec(tmp, tmp, 10000, 0, 10000, "Energy [keV]");
         sprintf(tmp, "energy_labr_2x2_fs_%02d", i+1);
         energy_labr_2x2_fs[i] = Spec(tmp, tmp, 10000, 0, 10000, "Energy [keV]");
+
+        sprintf(tmp, "labr_2x2_fs_gg_time_%02d", i+1);
+        sprintf(tmp2, "t_{LaBr} - t_{LaBr %02d}", i+1);
+        labr_2x2_fs_gg_time[i] = Mat(tmp, tmp, 1000, -100, 100, tmp2, NUM_LABR_2X2_DETECTORS, 0, NUM_LABR_2X2_DETECTORS, "LaBr detector id.");
+    }
+
+    // Allocating gg matrix
+    for (int i = 0 ; i < NUM_LABR_2X2_DETECTORS ; ++i){
+        for (int j = 0 ; j < NUM_LABR_2X2_DETECTORS ; ++j){
+
+            sprintf(tmp, "labr_2x2_fs_gg_e_t_%02d_%02d", i+1, j+1);
+            sprintf(tmp2, "Energy LaBr %02d [keV]", j+1);
+            sprintf(tmp3, "t_{LaBr %02d} - t_{LaBr %02d} [ns]", j+1, i+1);
+            labr_2x2_fs_gg_e_t[i][j] = Mat(tmp, tmp, 1000, 0, 5000, tmp2, 1000, -100, 100, tmp3);
+
+            sprintf(tmp, "labr_2x2_fs_gg_%02d_%02d", i+1, j+1);
+            sprintf(tmp2, "Energy LaBr %02d [keV]", i+1);
+            sprintf(tmp3, "Energy LaBr %02d [keV]", j+1);
+            labr_2x2_fs_gg[i][j] = Mat(tmp, tmp, 1000, 0, 5000, tmp2, 1000, 0, 5000, tmp3);
+        }
     }
 
     // Allocating the dE ring 'singles' spectra
@@ -703,6 +724,58 @@ bool UserSort::Sort(const Event &event)
         }
     }
 
+    // This part is for LaBr 2x2 fast signal coincidences.
+    for (int i = 0 ; i < NUM_LABR_2X2_DETECTORS ; ++i){
+        for (int j = 0 ; j < event.n_labr_2x2_fs[i] ; ++j){
+            energy = CalibrateE(event.w_labr_2x2_fs[i][j]);
+
+            for (int n = 0 ; n < NUM_LABR_2X2_DETECTORS ; ++n){
+
+                // We are only intrested in gammas in other detectors, so we will
+                // have to skip when n == i.
+                if ( i == n ) // Skip if same detector as the 245 keV "trigger"
+                    continue;
+
+                for (int m = 0 ; m < event.n_labr_2x2_fs[n] ; ++m){
+
+                    double energy2 = CalibrateE(event.w_labr_2x2_fs[n][m]);
+                    tdiff = CalcTimediff(event.w_labr_2x2_fs[i][j], event.w_labr_2x2_fs[n][m]);
+
+                    // We make time spectra
+                    labr_2x2_fs_gg_time[i]->Fill(tdiff, n);
+
+                    // If within time gate, we will keep data
+                    if (CheckTimeStatus(tdiff, labr_2x2_fs_time_cuts) == is_prompt)
+                        labr_2x2_fs_gg[i][n]->Fill(energy, energy2);
+
+                    if ( energy >= labr_2x2_fs_E_cut[0] && energy <= labr_2x2_fs_E_cut[1] )
+                        labr_2x2_fs_gg_e_t[i][n]->Fill(energy2, tdiff);
+                }
+            }
+
+            // Check if the energy is within some gate.
+            if (energy >= 235 && energy <= 255){
+                // Loop over all other LaBr 2x2 detectors to check if any are in coincidence.
+                for (int n = 0 ; n < NUM_LABR_2X2_DETECTORS ; ++n){
+
+                    // We are only intrested in gammas in other detectors, so we will
+                    // have to skip when n == i.
+                    if ( i == n ) // Skip if same detector as the 245 keV "trigger"
+                        continue;
+
+                    for (int m = 0 ; m < event.n_labr_2x2_fs[n] ; ++m){
+
+                        double energy2 = CalibrateE(event.w_labr_2x2_fs[n][m]);
+                        // We assume that the 245 keV gamma is the start.
+                        tdiff = CalcTimediff(event.w_labr_2x2_fs[i][j], event.w_labr_2x2_fs[n][m]);
+                        labr_2x2_fs_gg_e_t[i][n]->Fill(energy2, tdiff);
+                    }
+                }
+            }
+        }
+    }
+
+
     n_de_words = 0;
 
     if ( event.tot_dEdet_ring == 1 && event.tot_dEdet_sect == 1){
@@ -727,7 +800,7 @@ bool UserSort::Sort(const Event &event)
         word_t de_word_s = de_words[1];
 
         int ring = GetDetector(de_word_r.address).detectorNum;
-        int sect = GetDetector(de_word_s.address).detectorNum;
+        //int sect = GetDetector(de_word_s.address).detectorNum;
         int sect_e = GetDetector(e_word.address).detectorNum;
 
         double e_energy = CalibrateE(e_word);

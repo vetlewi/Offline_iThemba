@@ -80,6 +80,12 @@ private:
     Histogram1Dp energy_dE_sect_raw[NUM_SI_DE_RING], energy_dE_sect[NUM_SI_DE_RING];
     Histogram1Dp energy_E_raw[NUM_SI_E_DET], energy_E[NUM_SI_E_DET];
 
+    // Gamma-gamma specras. Note this is only for coincidences
+    // between small labr detectors (FAST SIGNAL ONLY!)!!!
+    Histogram2Dp labr_2x2_fs_gg_time[NUM_LABR_2X2_DETECTORS];
+    Histogram2Dp labr_2x2_fs_gg_e_t[NUM_LABR_2X2_DETECTORS][NUM_LABR_2X2_DETECTORS];
+    Histogram2Dp labr_2x2_fs_gg[NUM_LABR_2X2_DETECTORS][NUM_LABR_2X2_DETECTORS];
+
     // Time alignment spectra
     Histogram2Dp align_time_clover[NUM_CLOVER_DETECTORS];
     Histogram2Dp align_time_labr_3x8;
@@ -196,6 +202,10 @@ private:
 
     // Time gates for the dE sector.
     Parameter particle_sect_cuts;
+
+    // Energy gate for the first gamma in the energy vs. time spectrum
+    Parameter labr_2x2_E_cut;
+
 
 
     int64_t n_fail_de_ring, n_fail_de_sect, n_fail_e;
