@@ -11,9 +11,7 @@
 #define NUM_SI_DE_RING 48           //!< Number of Si dE rings
 #define NUM_SI_DE_SECT 16           //!< Number of Si dE sector
 #define NUM_SI_E_DET 16             //!< Number of E Si sections
-
 #define NUM_SI_RINGS 48         //!< Number of Si rings
-
 #define MAX_WORDS_PER_DET 32    //!< Maximum number of words per detector in each event
 
 

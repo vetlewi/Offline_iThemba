@@ -2,7 +2,15 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
+CONFIG += sdk_no_version_check
 
+# If you get the error: '"TFile.h" file not found',
+# You don't have the root-config tool in your environment path.
+# To fix:
+# 1) Open a terminal and run "which root". This will give a result
+#    similar to "/path/to/bin/root", copy the part before root, ie.
+#    "/path/to/bin".
+# 2) Open the "Project" tab in QtCreator
 
 ROOTFLAGS = $$system( root-config --cflags )
 ROOTLIBS = $$system( root-config --glibs )
