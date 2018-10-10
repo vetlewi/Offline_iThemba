@@ -389,7 +389,7 @@ void UserSort::CreateSpectra()
             // Make the 'raw' ede spectrum.
             sprintf(tmp, "ede_raw_b%02d_f%02d", i, j);
             sprintf(tmp2, "E : DE raw, pad %d, ring %d", i, j);
-            ede_raw[i][j] = Mat(tmp, tmp2, 1000, 0, 6500, "Back energy [ch]", 1000, 0, 5500, "Front energy [ch]");
+            ede_raw[i][j] = Mat(tmp, tmp2, 100, 0, 6500, "Back energy [ch]", 100, 0, 5500, "Front energy [ch]");
 
             // Make 'calibrated' ede spectrum.
             sprintf(tmp, "ede_b%02d_f%02d", i, j);
@@ -409,7 +409,7 @@ void UserSort::CreateSpectra()
         }
     }
 
-    int num_align_bins = 3000;
+    int num_align_bins = 30;
     Axis::bin_t align_low_bin = -1500.0;
     Axis::bin_t align_hig_bin = 1500.0;
 

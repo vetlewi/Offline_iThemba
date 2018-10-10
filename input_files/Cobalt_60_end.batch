@@ -1,6 +1,6 @@
-Gain file /Users/vetlewi/Documents/coding/offline_iThemba/input_files/gain_shift_zeros.dat
+Gain file /home/hannahcb/new_sort/Offline_iThemba/input_files/Gain_shift_64Ni_run.dat
 
-range /Users/vetlewi/Documents/coding/offline_iThemba/input_files/zrange_d.dat
+range /home/hannahcb/new_sort/Offline_iThemba/input_files/zrange_d.dat
 
 parameter thick_range = 190 290
 
@@ -54,10 +54,10 @@ parameter ex_from_ede = \
 19.222781 -0.954807 -0.001380 \
 19.217167 -0.954717 -0.001384
 
-data directory /Volumes/PR271/PR271A
+data directory /media/hannahcb/PR271/PR271A
 
-data file R137_0
-data file R137_1
-data file R137_2
+#data file R81_0
+#data file R82_1
+data file R82_2
 
-export root /Users/vetlewi/Documents/coding/Offline_iThemba/output_files/Co60_end.root
+export root Co56_end.root
