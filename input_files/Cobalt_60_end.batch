@@ -1,0 +1,31 @@
+Gain file /Users/vetlewi/Documents/coding/offline_iThemba/input_files/gain_shift_new.dat
+
+range /Users/vetlewi/Documents/coding/offline_iThemba/input_files/zrange_d.dat
+
+parameter thick_range = 190 290
+
+#parameter shift_time_labr_3x8 = \
+-100.416	-91.3897	-89.5205	-96.0625	-88.6754	-92.1861
+
+
+parameter shift_time_clover = \
+-951.308	-954.869	-925.129	-947.115 \
+-991.701	-1005.87	-982.376	-975.380 \
+-1018.74	-951.360	-974.051	-963.265 \
+-954.762	-948.025	-959.174	-928.339 \
+-961.843	-950.528	-954.042	-972.665 \
+-942.934	-944.067	-943.012	-951.355 \
+0			0			0			0		 \
+-953.051	-955.301	-945.692	-940.151 \
+-921.857	-920.943	-914.883	-918.054 \
+0			0			0			0
+
+parameter clover_addback_cuts = -100 100 500 800
+
+data directory /Volumes/PR271/PR271A
+
+data file R137_0
+data file R137_1
+data file R137_2
+
+export root /Users/vetlewi/Documents/coding/offline_iThemba/output_files/Co60_end.root
