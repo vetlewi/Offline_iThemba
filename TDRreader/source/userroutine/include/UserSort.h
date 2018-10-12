@@ -110,6 +110,13 @@ private:
     Histogram2Dp alfna_ppac, alfna_ppac_bg;
     Histogram2Dp alfna_veto_ppac, alfna_veto_ppac_bg;
 
+    // Gamma-gamma spectra from 60Co run.
+    // To check unfolding!
+    Histogram2Dp gam_gam_labr[NUM_LABR_3X8_DETECTORS];
+    Histogram2Dp gam_gam_clover[NUM_CLOVER_DETECTORS];
+    Histogram2Dp gam_t_labr; // Time spectrum - aligned to LaBr 1
+    Histogram2Dp gam_t_clover;  // Time spectrum - aligned to LaBr 1
+
     // Gain clover
     Parameter gain_clover;
 

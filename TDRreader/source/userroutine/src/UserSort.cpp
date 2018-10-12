@@ -47,6 +47,8 @@ typedef struct {
     word_t max_w;   //!< Word of the hit with the largest energy.
 } clover_gamma_t;
 
+typedef word_t labr_gamma_t;
+
 static bool set_par(Parameters& parameters, std::istream& ipar,
                     const std::string& name, int size)
 {
@@ -389,7 +391,7 @@ void UserSort::CreateSpectra()
             // Make the 'raw' ede spectrum.
             sprintf(tmp, "ede_raw_b%02d_f%02d", i, j);
             sprintf(tmp2, "E : DE raw, pad %d, ring %d", i, j);
-            ede_raw[i][j] = Mat(tmp, tmp2, 1000, 0, 6500, "Back energy [ch]", 1000, 0, 5500, "Front energy [ch]");
+            ede_raw[i][j] = Mat(tmp, tmp2, 100, 0, 6500, "Back energy [ch]", 100, 0, 5500, "Front energy [ch]");
 
             // Make 'calibrated' ede spectrum.
             sprintf(tmp, "ede_b%02d_f%02d", i, j);
@@ -478,6 +480,17 @@ void UserSort::CreateSpectra()
     sprintf(tmp, "alfna_bg");
     alfna_bg = Mat(tmp, tmp, 1500, 0, 15000, "LaBr [keV]", 1600, -1000, 15000, "Ex [keV]");
 
+    sprintf(tmp, "gam_t_labr");
+    gam_t_labr = Mat(tmp, tmp, 3000, -1500, 1500, "Time [ns]", NUM_LABR_3X8_DETECTORS, 0, NUM_LABR_3X8_DETECTORS, "LaBr detector");
+
+    sprintf(tmp, "gam_t_clover");
+    gam_t_clover = Mat(tmp, tmp, 3000, -1500, 1500, "Time [ns]", NUM_CLOVER_DETECTORS, 0, NUM_CLOVER_DETECTORS, "Clover detector");
+
+    for (int i = 0 ; i < NUM_LABR_3X8_DETECTORS ; ++i){
+        sprintf(tmp, "gam_gam_labr_%02d", i);
+        gam_gam_labr[i] = Mat(tmp, tmp, 2000, 0, 2000, "Energy [keV]", 2000, -500, 500, "Time [ns]");
+    }
+
     n_fail_e = 0;
     n_fail_de_ring = 0;
     n_fail_de_sect = 0;
@@ -517,6 +530,9 @@ bool UserSort::Sort(const Event &event)
 
     clover_gamma_t clover_gamma[256];
     int n_clover_gamma = 0;
+
+    labr_gamma_t labr_gamma[256];
+    int n_labr_gamma = 0;
 
     for ( i = 0 ; i < NUM_CLOVER_DETECTORS ; ++i ){
 
@@ -605,7 +621,7 @@ bool UserSort::Sort(const Event &event)
             energy_labr_3x8_raw[i]->Fill(event.w_labr_3x8[i][j].adcdata);
             energy = CalibrateE(event.w_labr_3x8[i][j]);
             energy_labr_3x8[i]->Fill(energy);
-
+            labr_gamma[n_labr_gamma++] = event.w_labr_3x8[i][j];
             // We align times
             if (have_alginment_data){
                 tdiff = CalcTimediff(start_alignment_word, event.w_labr_3x8[i][j]);
@@ -702,6 +718,42 @@ bool UserSort::Sort(const Event &event)
                 ++n_fail_e;
         }
     }
+
+    // First time alignment.
+    if ( event.n_labr_3x8[0] == 1 ){
+        for (int i = 1 ; i < NUM_LABR_3X8_DETECTORS ; ++i){
+            for (int j = 0 ; j < event.n_labr_3x8[i] ; ++j){
+                tdiff = CalcTimediff(event.w_labr_3x8[0][0], event.w_labr_3x8[i][j]);
+                gam_t_labr->Fill(tdiff, i);
+            }
+        }
+
+        for (int i = 0 ; i < n_clover_gamma ; ++i){
+            tdiff = CalcTimediff(event.w_labr_3x8[0][0], clover_gamma[i].max_w);
+            gam_t_clover->Fill(tdiff, clover_gamma[i].clover_no);
+        }
+
+    }
+
+    for (int i = 0 ; i < NUM_LABR_3X8_DETECTORS ; ++i){
+        for (int j = 0 ; j < event.n_labr_3x8[i] ; ++j){
+
+            energy = CalibrateE(event.w_labr_3x8[i][j]);
+
+            if (energy > 1292 && energy < 1371){
+                for (int n = 0 ; n < NUM_LABR_3X8_DETECTORS ; ++n){
+                    if (n == i)
+                        continue;
+                    for (int m = 0 ; m < event.n_labr_3x8[i] ; ++m){
+                        tdiff = CalcTimediff(event.w_labr_3x8[i][j], event.w_labr_3x8[n][m]);
+                        gam_gam_labr[n]->Fill(CalibrateE(event.w_labr_3x8[n][m]), tdiff);
+                    }
+                }
+            }
+
+        }
+    }
+
 
     n_de_words = 0;
 

@@ -2,9 +2,9 @@
 
 void GetPeaks()
 {
-	TFile *file = TFile::Open("Si_calib.root");
+	TFile *file = TFile::Open("Co60_end.root");
 
-	TH2 *m = (TH2 *)file->Get("align_time_e");
+	TH2 *m = (TH2 *)file->Get("align_time_labr_3x8");
 
 	TSpectrum spec;
 
@@ -13,7 +13,7 @@ void GetPeaks()
 	double peakPos[1024];
 
 
-	for (int i = 1 ; i < 17 ; ++i ){
+	for (int i = 0 ; i < 7 ; ++i ){
 		sprintf(tmp, "px_%d", i);
 		TH1 *h = m->ProjectionX(tmp, i, i);
 		h->Draw();
@@ -23,7 +23,7 @@ void GetPeaks()
 		//peakPos[i-1] = spec.GetPositionX()[0];
 
 		double param[3] = {200., spec.GetPositionX()[0], 1.0};
-		TF1 *fit = new TF1("total","gaus(0)",spec.GetPositionX()[0]-1.5,spec.GetPositionX()[0]+2.0);
+		TF1 *fit = new TF1("total","gaus(0)",spec.GetPositionX()[0]-20,spec.GetPositionX()[0]+20);
 		
 		for (Int_t k=0; k<3; k++) {
         fit->SetParameter(k, param[k]);
@@ -35,7 +35,7 @@ void GetPeaks()
 
 	}
 	int n = 1;
-	for (int i = 0 ; i < 64 ; ++i){
+	for (int i = 0 ; i < 6 ; ++i){
 		if ( i / 8 == n ){
 			cout << '\\' << endl;
 			++n;
