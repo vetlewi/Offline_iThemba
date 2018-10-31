@@ -56,8 +56,15 @@ parameter ex_from_ede = \
 
 data directory /media/hannahcb/PR271/PR271A
 
-data file R137_0
-data file R137_1
-data file R137_2
+data file R136_0
+data file R136_1
+data file R136_2
+data file R136_3
+data file R136_4
+data file R136_5
+data file R136_6
+data file R136_7
+data file R136_8
+data file R136_9
 
-export root Co60_end.root
+export root backround136_end.root

@@ -1,0 +1,337 @@
+# Importing the gain shit information.
+Gain file //home/hannahcb/new_sort/Offline_iThemba/input_files/Gain_shift_64Ni_run.dat
+
+range /home/hannahcb/new_sort/Offline_iThemba/input_files/zrange_d.dat
+
+parameter thick_range = 190 290
+
+parameter ex_from_ede = \
+19.454236 -0.956246 -0.001233 \
+19.450095 -0.956263 -0.001235 \
+19.445895 -0.956279 -0.001237 \
+19.441640 -0.956293 -0.001239 \
+19.437329 -0.956305 -0.001241 \
+19.432966 -0.956316 -0.001243 \
+19.428551 -0.956325 -0.001246 \
+19.424085 -0.956332 -0.001248 \
+19.419570 -0.956337 -0.001250 \
+19.415007 -0.956340 -0.001253 \
+19.410398 -0.956342 -0.001255 \
+19.405744 -0.956341 -0.001258 \
+19.401047 -0.956338 -0.001260 \
+19.396307 -0.956334 -0.001263 \
+19.391525 -0.956327 -0.001266 \
+19.386703 -0.956317 -0.001268 \
+19.381843 -0.956306 -0.001271 \
+19.376945 -0.956292 -0.001274 \
+19.372010 -0.956276 -0.001277 \
+19.367040 -0.956258 -0.001280 \
+19.362035 -0.956237 -0.001283 \
+19.356997 -0.956214 -0.001286 \
+19.351926 -0.956188 -0.001289 \
+19.346825 -0.956160 -0.001292 \
+19.341693 -0.956129 -0.001296 \
+19.336531 -0.956096 -0.001299 \
+19.331341 -0.956061 -0.001302 \
+19.326123 -0.956022 -0.001306 \
+19.320879 -0.955982 -0.001309 \
+19.315609 -0.955939 -0.001313 \
+19.310314 -0.955893 -0.001316 \
+19.304994 -0.955844 -0.001320 \
+19.299651 -0.955793 -0.001323 \
+19.294286 -0.955740 -0.001327 \
+19.288898 -0.955684 -0.001331 \
+19.283490 -0.955625 -0.001335 \
+19.278060 -0.955564 -0.001339 \
+19.272611 -0.955500 -0.001342 \
+19.267143 -0.955433 -0.001346 \
+19.261656 -0.955364 -0.001350 \
+19.256152 -0.955292 -0.001355 \
+19.250630 -0.955218 -0.001359 \
+19.245091 -0.955141 -0.001363 \
+19.239536 -0.955061 -0.001367 \
+19.233966 -0.954979 -0.001371 \
+19.228381 -0.954894 -0.001376 \
+19.222781 -0.954807 -0.001380 \
+19.217167 -0.954717 -0.001384
+
+parameter labr_3x8_time_cuts = -20.0 100.0 360.0 460.0
+parameter clover_addback_cuts = -75.0 75.0 600.0 750.0
+
+parameter particle_ring_cuts = -10.0 10.0 360.0 380.0
+parameter particle_sect_cuts = -10.0 10.0 360.0 380.0
+
+parameter shift_time_labr_2x2_fs = 0.0	4.16531	-2.16047	-26.4394	-22.4103	-2.17041
+
+parameter shift_time_labr_2x2_ss = 0	0	0	0	0	0
+
+parameter shift_time_labr_3x8 = -41.3958	-45.7712
+
+parameter shift_time_clover = \
+-938.638	-941.373	-1063.900	-1044.410	\
+-975.746	-988.640	-1106.480	-956.810	\
+-961.739	-941.880	-923.483	-940.374	\
+-943.078	-943.073	-956.931	-925.193	\
+-1114.21	-1109.06	-935.611	-958.528	\
+-941.280	-938.232	-951.780	-940.450	\
+0.000000	0.000000	0.000000	0.000000	\
+-946.266	-1072.47	-1092.46	-1141.67	\
+-894.000	-886.111	-1024.31	-887.114	\
+0.000000	0.000000	0.000000	0.000000
+
+parameter shift_time_e = \
+-263.402	-262.857	-263.008	-263.182	-262.159	-262.467	-262.746	-262.944	\
+-262.669	-268.861	-262.189	-268.156	-262.783	-266.768	-262.793	-268.322
+
+parameter shift_time_de_ring = \
+-196.651	-186.375	-185.798	-186.986	-187.278	-187.026	-186.707	-186.768	\
+-196.470	-186.596	-186.902	-189.000	-196.797	-187.495	-186.694	-187.035	\
+-194.995	-237.580	-192.169	-236.916	-194.504	-234.748	-195.630	-236.822	\
+-195.857	-220.209	-197.086	-236.379	-197.113	-234.807	-202.649	-235.003	\
+-208.172	-234.962	-197.955	-235.082	-196.344	-235.992	-198.743	-235.798	\
+-205.045	-234.941	-196.379	-236.324	-236.500	-236.770	-198.012	-236.583
+
+parameter shift_time_de_sect = \
+-188.370	-188.055	-188.293	-188.407	-188.130	-190.339	-194.676	-188.872	\
+-189.359	-189.833	-188.600	-188.686	-190.348	-190.390	-187.939	-187.838
+
+# Important notice about the numeration of the Si rings. It seems like the
+# channel numberation is as following.
+# Ch. no.:	Ring no.:
+#	15			15
+#	0			14
+#	14			13
+#	1			12
+#	13			11
+#	2			10
+#	12			9
+#	3			8
+#	11			7
+#	4			6
+#	10			5
+#	5			4
+#	9			3
+#	6			2
+#	7			1
+#	8			0
+# Or:
+# Ring no.:	Ch.No:
+#	0	8
+#	1	7
+#	2	6
+#	3	9
+#	4	5
+#	5	10
+#	6	4
+#	7	11
+#	8	3
+#	9	12
+#	10	2
+#	11	13
+#	12	1
+#	13	14
+#	14	0
+#	15	15
+
+
+# Now we will need to read files... There is a lot of the :O
+data directory /Volumes/PR282/PR282
+
+data file R73_0
+data file R73_1
+data file R73_2
+data file R73_3
+data file R73_4
+data file R73_5
+data file R73_6
+data file R73_7
+data file R73_8
+data file R73_9
+data file R73_10
+data file R73_11
+data file R73_12
+data file R73_13
+data file R73_14
+
+data file R74_0
+data file R74_1
+data file R74_2
+data file R74_3
+data file R74_4
+data file R74_5
+data file R74_6
+data file R74_7
+data file R74_8
+data file R74_9
+data file R74_10
+data file R74_11
+data file R74_12
+data file R74_13
+data file R74_14
+data file R74_15
+data file R74_16
+data file R74_17
+data file R74_18
+data file R74_19
+
+data file R76_0
+data file R76_1
+data file R76_2
+data file R76_3
+data file R76_4
+data file R76_5
+data file R76_6
+data file R76_7
+data file R76_8
+data file R76_9
+data file R76_10
+data file R76_11
+data file R76_12
+data file R76_13
+data file R76_14
+data file R76_15
+data file R76_16
+data file R76_17
+data file R76_18
+
+data file R77_0
+data file R77_1
+data file R77_2
+data file R77_3
+data file R77_4
+data file R77_5
+data file R77_6
+data file R77_7
+data file R77_8
+data file R77_9
+
+data file R78_0
+data file R78_1
+data file R78_2
+data file R78_3
+data file R78_4
+data file R78_5
+data file R78_6
+data file R78_7
+data file R78_8
+data file R78_9
+data file R78_10
+data file R78_11
+data file R78_12
+data file R78_13
+data file R78_14
+data file R78_15
+data file R78_16
+data file R78_17
+data file R78_18
+data file R78_19
+data file R78_20
+data file R78_21
+
+data file R80_0
+data file R80_1
+data file R80_2
+data file R80_3
+data file R80_4
+data file R80_5
+data file R80_6
+data file R80_7
+data file R80_8
+data file R80_9
+data file R80_10
+data file R80_11
+data file R80_12
+data file R80_13
+data file R80_14
+data file R80_15
+data file R80_16
+data file R80_17
+data file R80_18
+
+data file R81_0
+data file R81_1
+data file R81_2
+data file R81_3
+data file R81_4
+data file R81_5
+data file R81_6
+data file R81_7
+data file R81_8
+
+data file R82_0
+data file R82_1
+data file R82_2
+data file R82_3
+data file R82_4
+data file R82_5
+data file R82_6
+data file R82_7
+data file R82_8
+data file R82_9
+data file R82_10
+data file R82_11
+data file R82_12
+data file R82_13
+data file R82_14
+data file R82_15
+data file R82_16
+
+data file R83_0
+data file R83_1
+data file R83_2
+data file R83_3
+data file R83_4
+data file R83_5
+data file R83_6
+data file R83_7
+data file R83_8
+data file R83_9
+data file R83_10
+data file R83_11
+data file R83_12
+data file R83_13
+data file R83_14
+data file R83_15
+data file R83_16
+data file R83_17
+
+data file R84_0
+data file R84_1
+data file R84_2
+data file R84_3
+data file R84_4
+data file R84_5
+data file R84_6
+data file R84_7
+data file R84_8
+data file R84_9
+data file R84_10
+data file R84_11
+data file R84_12
+data file R84_13
+data file R84_14
+data file R84_15
+data file R84_16
+
+data file R85_0
+data file R85_1
+data file R85_2
+data file R85_3
+data file R85_4
+data file R85_5
+
+data file R86_0
+data file R86_1
+data file R86_2
+data file R86_3
+data file R86_4
+data file R86_5
+data file R86_6
+data file R86_7
+data file R86_8
+data file R86_9
+data file R86_10
+data file R86_11
+data file R86_12
+
+export root /Users/vetlewi/Documents/coding/Offline_iThemba/output_files/Si_calib.root

@@ -1,4 +1,4 @@
-Gain file /home/hannahcb/new_sort/Offline_iThemba/input_files/Gain_shift_64Ni_run.dat
+Gain file /home/hannahcb/new_sort/Offline_iThemba/input_files/gain_shift_second_cal.dat
 
 range /home/hannahcb/new_sort/Offline_iThemba/input_files/zrange_d.dat
 
@@ -60,4 +60,4 @@ data file R137_0
 data file R137_1
 data file R137_2
 
-export root Co60_end.root
+export root Co60_end_second_cal.root
