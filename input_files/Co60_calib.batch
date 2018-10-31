@@ -28,4 +28,4 @@ data directory /Volumes/PR282/PR282
 
 data file R94_0
 
-export root /Users/vetlewi/Documents/coding/Offline_iThemba/output_files/Ni60_calib.root
+export root /Users/vetlewi/Documents/coding/Offline_iThemba/output_files/Co60_calib_conv.root
