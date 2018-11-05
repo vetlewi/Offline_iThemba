@@ -357,11 +357,12 @@ bool OfflineSorting::next_command(const std::string& cmd)
     }
 }
 
-bool OfflineSorting::next_commandline(std::istream& in, std::string& cmd_line)
+bool OfflineSorting::next_commandline(std::istream& in, std::string& cmd_line, int &lineno)
 {
     cmd_line = "";
     std::string line;
     while ( getline(in, line) ){
+        lineno++;
         size_t ls = line.size();
         if ( ls == 0 ){
             break;
@@ -379,11 +380,12 @@ void OfflineSorting::Run(const std::string& batchfilename)
 {
     std::ifstream batch_file(batchfilename.c_str());
     std::string batch_line;
-    while ( leaveprog == 'n' && next_commandline(batch_file, batch_line) ){
+    int lineno = 0;
+    while ( leaveprog == 'n' && next_commandline(batch_file, batch_line, lineno) ){
         if ( batch_line.size() == 0 || batch_line[0] == '#' )
             continue;
         if ( !next_command(batch_line) ) {
-            std::cerr << "Do not understand batch line: '" << batch_line << "'" << std::endl;
+            std::cerr << "Do not understand batch line: '" << batch_line << "'" << ", L:" << lineno << std::endl;
             break;
         }
     }

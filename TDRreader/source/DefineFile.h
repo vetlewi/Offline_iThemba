@@ -21,7 +21,7 @@
 #ifndef DEFINEFILE_H
 #define DEFINEFILE_H
 
-#define SINGLES 1
+#define SINGLES 0
 
 #if SINGLES
     #define NUM_WORDS 1024

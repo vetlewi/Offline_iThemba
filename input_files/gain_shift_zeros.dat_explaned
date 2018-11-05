@@ -1,0 +1,106 @@
+# Gain for Clover 
+1	1	1	1 # 1 A B C D
+1	1	1	1 # 2 A B C D
+1	1	1	1 # etc.
+1	1	1	1
+1	1	1	1
+1	1	1	1
+1	1	1	1
+1	1	1	1
+1	1	1	1
+1	1	1	1
+
+# Shift for clover
+0	0	0	0 # 1 A B C D
+0	0	0	0 # 2 A B C D
+0	0	0	0 # etc.
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+
+
+# Gain for LaBr 3.5x8
+# labr 1 2 3 4 5 6
+1	1	1	1	1	1
+
+#Shift for LaBr 3.5x8
+0	0	0	0	0	0
+
+# Gain for LaBr 2x2 slow signal (not present in inverse-kinematics, just set to zero or what ever... just have the numbers here)
+1	1	1	1	1	1
+
+# Shift for LaBr 2x2 slow signal (not present in inverse-kinematics, just set to zero or what ever... just have the numbers here)
+0	0	0	0	0	0
+
+# Gain for LaBr 2x2 fast signal
+1	1	1	1	1	1
+
+# Shift for LaBr 2x2 fast signal
+0	0	0	0	0	0
+
+# Gain for dE Si rings (48 rings)
+1	1	1	1	1	1	1	1
+1	1	1	1	1	1	1	1
+1	1	1	1	1	1	1	1
+1	1	1	1	1	1	1	1
+1	1	1	1	1	1	1	1
+1	1	1	1	1	1	1	1
+
+# Shift for dE Si rings (48 rings)
+0	0	0	0	0	0	0	0
+0	0	0	0	0	0	0	0
+0	0	0	0	0	0	0	0
+0	0	0	0	0	0	0	0
+0	0	0	0	0	0	0	0
+0	0	0	0	0	0	0	0
+
+# Gain for dE Si sectors (16 sectors)
+1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+
+# Shift for dE Si sectors (16 sectors)
+0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+
+# Gain for E Si sectors (16 sectors)
+1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+
+# Shift for E Si sectors (16 sectors)
+0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+
+# Time shift of clovers (for time alignments)
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+0	0	0	0
+
+# Time shift of labr 3.5x8 (for time alignments)
+0	0	0	0	0	0
+
+# Time shift of labr 2x2 slow signal (just put whatever here...)
+0	0	0	0	0	0
+
+# Time shift of labr 2x2 fast signal
+0	0	0	0	0	0
+
+# Time shift of Si rings (dE)
+0	0	0	0	0	0	0	0
+0	0	0	0	0	0	0	0
+0	0	0	0	0	0	0	0
+0	0	0	0	0	0	0	0
+0	0	0	0	0	0	0	0
+0	0	0	0	0	0	0	0
+
+# Time shift of Si sectors (dE)
+0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
+
+# Time shift of Si sectors (E)
+0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0

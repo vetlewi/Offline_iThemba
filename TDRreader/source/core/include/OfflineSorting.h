@@ -165,7 +165,7 @@ private:
     /*! Input will be the batch file.
      *  \return true if successful.
      */
-    bool next_commandline(std::istream& in, std::string& cmd_line);
+    bool next_commandline(std::istream& in, std::string& cmd_line, int &lineno);
 
 
 };

@@ -2,7 +2,7 @@
 
 void GetPeaks_LaBr()
 {
-	TFile *file = TFile::Open("Si_calib.root");
+	TFile *file = TFile::Open("Working.root");
 
 	TH2 *m = (TH2 *)file->Get("align_time_clover_09");
 
@@ -16,6 +16,7 @@ void GetPeaks_LaBr()
 	for (int i = 1 ; i < 5 ; ++i ){
 		sprintf(tmp, "px_%d", i);
 		TH1 *h = m->ProjectionX(tmp, i, i);
+		h->Rebin(5);
 		h->Draw();
 		spec.Search(h);
 		int n_peaks = spec.GetNPeaks();
@@ -23,19 +24,19 @@ void GetPeaks_LaBr()
 		//peakPos[i-1] = spec.GetPositionX()[0];
 
 		double param[3] = {200., spec.GetPositionX()[0], 1.0};
-		TF1 *fit = new TF1("total","gaus(0)",spec.GetPositionX()[0]-4.0,spec.GetPositionX()[0]+1.5);
+		TF1 *fit = new TF1("total","gaus(0)",spec.GetPositionX()[0]-20.0,spec.GetPositionX()[0]+20.);
 		
 		for (Int_t k=0; k<3; k++) {
         fit->SetParameter(k, param[k]);
     }
 
 		h->Fit("total", "bR");
-		peakPos[i-1] = fit->GetParameter(1);
+		peakPos[i-1] = spec.GetPositionX()[0];//fit->GetParameter(1);
 		fit->Draw("same");
 
 	}
 	int n = 1;
-	cout << "0 ";
+	//cout << "0 ";
 	for (int i = 0 ; i < 4 ; ++i){
 		if ( i / 16 == n ){
 			cout << '\\' << endl;

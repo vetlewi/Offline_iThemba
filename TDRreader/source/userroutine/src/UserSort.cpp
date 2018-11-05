@@ -41,11 +41,9 @@
 #include <stdlib.h>
 
 typedef struct {
-    double energy;  //!< Energy of the event
-    int clover_no;  //!< Clover ID.
-    int crystal_no; //!< Crystal number (with largest energy deposition)
-    word_t max_w;   //!< Word of the hit with the largest energy.
-} clover_gamma_t;
+    word_t ring_event;
+    word_t sect_event;
+} delta_e_event_t;
 
 static bool set_par(Parameters& parameters, std::istream& ipar,
                     const std::string& name, int size)
@@ -117,11 +115,13 @@ UserSort::UserSort()
     , ex_from_ede    ( GetParameters(), "ex_from_ede", NUM_SI_RINGS*3)
     , thick_range    ( GetParameters(), "thick_range", 2      )
     , labr_3x8_time_cuts  ( GetParameters(), "labr_3x8_time_cuts", 2*2  )
+    , clover_time_cuts( GetParameters(), "clover_time_cuts", 2*2  )
     , labr_2x2_ss_time_cuts  ( GetParameters(), "labr_2x2_ss_time_cuts", 2*2  )
     , labr_2x2_fs_time_cuts  ( GetParameters(), "labr_2x2_fs_time_cuts", 2*2  )
     , clover_addback_cuts( GetParameters(), "clover_addback_cuts", 2*2 )
     , particle_ring_cuts ( GetParameters(), "particle_ring_cuts", 2*2 )
     , particle_sect_cuts ( GetParameters(), "particle_sect_cuts", 2*2 )
+    , particle_sect_ring_cuts( GetParameters(), "particle_sect_ring_cuts", 2*2 )
 {
 }
 
@@ -180,7 +180,7 @@ double UserSort::CalcTimediff(const word_t &start, const word_t &stop) const
 
     switch ( info_start.type ){
         case clover : {
-            start_shift = shift_time_clover[info_start.detectorNum*NUM_CLOVER_DETECTORS + info_start.telNum];
+            start_shift = shift_time_clover[info_start.detectorNum*NUM_CLOVER_CRYSTALS + info_start.telNum];
             break;
         }
         case labr_3x8 : {
@@ -215,19 +215,19 @@ double UserSort::CalcTimediff(const word_t &start, const word_t &stop) const
 
     switch ( info_stop.type ){
         case clover : {
-            stop_shift = shift_time_clover[info_start.detectorNum*NUM_CLOVER_DETECTORS + info_start.telNum];
+            stop_shift = shift_time_clover[info_stop.detectorNum*NUM_CLOVER_CRYSTALS + info_stop.telNum];
             break;
         }
         case labr_3x8 : {
-            stop_shift = shift_time_labr_3x8[info_start.detectorNum];
+            stop_shift = shift_time_labr_3x8[info_stop.detectorNum];
             break;
         }
         case labr_2x2_ss : {
-            stop_shift = shift_time_labr_2x2_ss[info_start.detectorNum];
+            stop_shift = shift_time_labr_2x2_ss[info_stop.detectorNum];
             break;
         }
         case labr_2x2_fs : {
-            stop_shift = shift_time_labr_2x2_fs[info_start.detectorNum];
+            stop_shift = shift_time_labr_2x2_fs[info_stop.detectorNum];
             break;
         }
         case deDet_ring : {
@@ -350,8 +350,8 @@ void UserSort::CreateSpectra()
         sprintf(tmp, "energy_dE_ring_%02d", i);
         energy_dE_ring[i] = Spec(tmp, tmp, 10000, 0, 10000, "Energy [keV]");
 
-        sprintf(tmp, "h_ede_ring_%02d", i+1);
-        h_ede_ring[i] = Spec(tmp, tmp, 1000, 0, 20000, "Energy [keV]");
+        sprintf(tmp, "h_ex_r%02d", i);
+        h_ex[i] = Spec(tmp, tmp, 10000, 0, 10000, "Excitation energy [keV]");
     }
 
     // Allocating the dE sector 'singles' spectra
@@ -363,6 +363,9 @@ void UserSort::CreateSpectra()
 
         sprintf(tmp, "energy_dE_sect_%02d", i);
         energy_dE_sect[i] = Spec(tmp, tmp, 10000, 0, 10000, "Energy [keV]");
+
+        sprintf(tmp, "time_ring_sect_%02d", i);
+        time_ring_sect[i] = Mat(tmp, tmp, 1000, -500, 500, "Timediff. [ns]", NUM_SI_DE_RING, 0, NUM_SI_DE_RING, "Ring no.");
     }
 
     // Allocating the LaBr 'singles' spectra
@@ -375,6 +378,12 @@ void UserSort::CreateSpectra()
         sprintf(tmp, "energy_E_%02d", i);
         energy_E[i] = Spec(tmp, tmp, 10000, 0, 10000, "Energy [keV]");
     }
+
+    int num_bin_ede = 500;
+    Axis::bin_t e_axis_low = 0;
+    Axis::bin_t e_axis_high = 18000;
+    Axis::bin_t de_axis_low = 0;
+    Axis::bin_t de_axis_high = 10000;
 
     // Making all spectra that are indexed [NUM_SI_E_DET]
     for (int i = 0 ; i < NUM_SI_E_DET ; ++i){
@@ -389,29 +398,29 @@ void UserSort::CreateSpectra()
             // Make the 'raw' ede spectrum.
             sprintf(tmp, "ede_raw_b%02d_f%02d", i, j);
             sprintf(tmp2, "E : DE raw, pad %d, ring %d", i, j);
-            ede_raw[i][j] = Mat(tmp, tmp2, 1000, 0, 6500, "Back energy [ch]", 1000, 0, 5500, "Front energy [ch]");
+            ede_raw[i][j] = Mat(tmp, tmp2, num_bin_ede, e_axis_low, e_axis_high, "Back energy [ch]",
+                                           num_bin_ede, de_axis_low, de_axis_high, "Front energy [ch]");
 
             // Make 'calibrated' ede spectrum.
             sprintf(tmp, "ede_b%02d_f%02d", i, j);
             sprintf(tmp2, "E : DE calibrated, pad %d, ring %d", i, j);
-            ede[i][j] = Mat(tmp, tmp2, 500, 0, 20000, "Back energy [keV]", 500, 0, 15000, "Front energy [keV]");
+            ede[i][j] = Mat(tmp, tmp2, num_bin_ede, e_axis_low, e_axis_high, "Back energy [keV]",
+                                       num_bin_ede, de_axis_low, de_axis_high, "Front energy [keV]");
 
-            // Make total energy spectra.
-            sprintf(tmp, "h_ede_b%02d_f%02d", i, j);
-            sprintf(tmp2, "Total energy deposited, pad %d, ring %d", i, j);
-            h_ede[i][j] = Spec(tmp, tmp2, 20000, 0, 20000, "Total energy deposited [keV]");
-
-
-            // Make excitation spectra.
-            sprintf(tmp, "h_ex_b%02d_f%02d", i, j);
-            sprintf(tmp2, "Singles excitation spectrum, pad %d, ring %d", i, j);
-            h_ex[i][j] = Spec(tmp, tmp2, 20000, 0, 20000, "Excitation energy [keV]");
+            // Make 'semi-calibrated' ede spectrum (for calibration of sectors)
+            sprintf(tmp, "ede_s%02d_r%02d", i, j);
+            ede_raw_sect[i][j] = Mat(tmp, tmp, num_bin_ede, e_axis_low, e_axis_high, "E energy [keV]",
+                                               num_bin_ede, de_axis_low, de_axis_high, "#Delta E sector energy [ch]");
         }
     }
 
     int num_align_bins = 3000;
     Axis::bin_t align_low_bin = -1500.0;
     Axis::bin_t align_hig_bin = 1500.0;
+
+    // Notes to my self:
+    // 1) Sector 06 will have to be manually calibrated
+    // 2) ---- || ---- for sector 9
 
     // Alignment spectra (for time alignment of all detector to a common detector)
     for (int i = 0 ; i < NUM_CLOVER_DETECTORS ; ++i){
@@ -432,7 +441,7 @@ void UserSort::CreateSpectra()
     align_time_labr_2x2_ss = Mat(tmp, tmp, num_align_bins, align_low_bin, align_hig_bin, "t_{LaBr 2x2 (slow)} - t_{common} [ns]", NUM_LABR_2X2_DETECTORS, 0, NUM_LABR_2X2_DETECTORS, "LaBr 2x2 id.");
 
     sprintf(tmp, "align_time_labr_2x2_fs");
-    align_time_labr_2x2_fs = Mat(tmp, tmp, num_align_bins, align_low_bin, align_hig_bin, "t_{LaBr 2x2 (fast)} - t_{common} [ns]", NUM_LABR_2X2_DETECTORS, 0, NUM_LABR_2X2_DETECTORS, "LaBr 2x2 id.");
+    align_time_labr_2x2_fs = Mat(tmp, tmp, num_align_bins*10, align_low_bin, align_hig_bin, "t_{LaBr 2x2 (fast)} - t_{common} [ns]", NUM_LABR_2X2_DETECTORS, 0, NUM_LABR_2X2_DETECTORS, "LaBr 2x2 id.");
 
     sprintf(tmp, "align_time_de_ring");
     align_time_de_ring = Mat(tmp, tmp, num_align_bins, align_low_bin, align_hig_bin, "t_{#Delta E ring} - t_{common} [ns]", NUM_SI_DE_RING, 0, NUM_SI_DE_RING, "#Delta E ring detector id.");
@@ -454,29 +463,35 @@ void UserSort::CreateSpectra()
 
     sprintf(tmp, "ede_all");
     sprintf(tmp2, "E : DE, all");
-    ede_all = Mat(tmp, tmp2, 4000, 0, 20000, "Back energy [keV]", 1000, 0, 5000, "Front energy [keV]");
+    ede_all = Mat(tmp, tmp2, 4000, 0, 20000, "Back energy [keV]", 1000, 0, 10000, "Front energy [keV]");
+
+    sprintf(tmp, "h_thick");
+    h_thick = Mat(tmp, tmp, 1000, 0, 1000, "Apparent thickness [um]", 1000, 0, 18000, "E energy [keV]");
 
     sprintf(tmp, "ede_gate");
     sprintf(tmp2, "E : DE, after particle gate");
-    ede_gate = Mat(tmp, tmp2, 1000, 0, 20000, "Back energy [keV]", 250, 0, 5000, "Front energy [keV]");
-
-    sprintf(tmp, "h_thick");
-    sprintf(tmp2, "Apparent thickness of #Delta E");
-    h_thick = Spec(tmp, tmp2, 3000, 0, 3000, "Apparent thickness [#mu m]");
-
-    sprintf(tmp, "h_ede_all");
-    sprintf(tmp2, "Total particle energy, all");
-    h_ede_all = Spec(tmp, tmp2, 20000, 0, 20000, "Particle energy [keV]");
-
-    sprintf(tmp, "h_ex_all");
-    sprintf(tmp2, "Excitation energy, all");
-    h_ex_all = Spec(tmp, tmp2, 20000, 0, 20000, "Excitation energy [keV]");
+    ede_gate = Mat(tmp, tmp2, 1000, 0, 20000, "Back energy [keV]", 1000, 0, 10000, "Front energy [keV]");
 
     sprintf(tmp, "alfna");
     alfna = Mat(tmp, tmp, 1500, 0, 15000, "LaBr [keV]", 1600, -1000, 15000, "Ex [keV]");
 
     sprintf(tmp, "alfna_bg");
     alfna_bg = Mat(tmp, tmp, 1500, 0, 15000, "LaBr [keV]", 1600, -1000, 15000, "Ex [keV]");
+
+    sprintf(tmp, "alfna_clover");
+    alfna_clover = Mat(tmp, tmp, 1500, 0, 15000, "CLOVER [keV]", 1600, -1000, 15000, "Ex [keV]");
+
+    sprintf(tmp, "alfna_clover_bg");
+    alfna_clover_bg = Mat(tmp, tmp, 1500, 0, 15000, "CLOVER [keV]", 1600, -1000, 15000, "Ex [keV]");
+
+    sprintf(tmp, "time_energy_e");
+    time_energy_e = Mat(tmp, tmp, 1000, 0, 16000, "Energy [keV]", 2000, -200, 200, "Time t_{#Delta E} - t_{E} [ns]");
+
+    sprintf(tmp, "h_ex_all");
+    h_ex_all = Spec(tmp, tmp, 10000, 0, 10000, "Excitation energy [keV]");
+
+    sprintf(tmp, "prompt_clover");
+    prompt_clover = Mat(tmp, tmp, 2000, -1000, 1000, "Time [ns]", NUM_CLOVER_DETECTORS, 0, NUM_CLOVER_DETECTORS, "CLOVER detector no.");
 
     n_fail_e = 0;
     n_fail_de_ring = 0;
@@ -487,51 +502,21 @@ void UserSort::CreateSpectra()
     tot = 0;
 }
 
-
-bool UserSort::Sort(const Event &event)
+int UserSort::Addback_Clover(const Event &event, const word_t &align_time, clover_gamma_t *clover_gamma)
 {
-    int i, j, k;
-    double energy;
-    double tdiff;
+    int i, j, k, n_clover_gamma=0;
+    double energy, tdiff;
 
     bool have_been_counted[NUM_CLOVER_DETECTORS][NUM_CLOVER_CRYSTALS][MAX_WORDS_PER_DET];
-    for (i = 0 ; i < NUM_CLOVER_DETECTORS ; ++i){
-        for (j = 0 ; j < NUM_CLOVER_CRYSTALS ; ++j){
-            for (k = 0 ; k < MAX_WORDS_PER_DET ; ++k){
-                have_been_counted[i][j][k] = false;
-            }
-        }
-    }
-
-    n_tot_e += event.tot_Edet;
-    n_tot_de_ring += event.tot_dEdet_ring;
-    n_tot_de_sect += event.tot_dEdet_sect;
-    tot += 1;
-
-    // For time alignments.
-    bool have_alginment_data = ( event.n_labr_2x2_fs[0] == 1 );
-    word_t start_alignment_word = event.w_labr_2x2_fs[0][0];
-
-    word_t de_words[256]; // List of dE hits from pads in front of the trigger E word.
-    int n_de_words=0;
-
-    clover_gamma_t clover_gamma[256];
-    int n_clover_gamma = 0;
-
-    for ( i = 0 ; i < NUM_CLOVER_DETECTORS ; ++i ){
-
-        for ( j = 0 ; j < NUM_CLOVER_CRYSTALS ; ++j ){
-            for (k = 0 ; k < event.n_clover[i][j] ; ++k){
-                energy_clover_raw[i][j]->Fill(event.w_clover[i][j][k].adcdata);
-                energy = CalibrateE(event.w_clover[i][j][k]);
-                energy_clover[i][j]->Fill(energy);
-
-                if (have_alginment_data){
-                    tdiff = CalcTimediff(start_alignment_word, event.w_clover[i][j][k]);
-                    align_time_clover[i]->Fill(tdiff, j);
+        for (i = 0 ; i < NUM_CLOVER_DETECTORS ; ++i){
+            for (j = 0 ; j < NUM_CLOVER_CRYSTALS ; ++j){
+                for (k = 0 ; k < MAX_WORDS_PER_DET ; ++k){
+                    have_been_counted[i][j][k] = false;
                 }
             }
         }
+
+    for ( i = 0 ; i < NUM_CLOVER_DETECTORS ; ++i ){
 
         if (event.tot_clover[i] == 1){ // Only single, fill time and energy spectra as usual.
 
@@ -540,6 +525,8 @@ bool UserSort::Sort(const Event &event)
                     if ( have_been_counted[i][j][k] ) // This should never be true, but check anyway
                         continue; // Skip to next word.
                     have_been_counted[i][j][k] = true;
+                    if ( event.w_clover[i][j][k].adcdata >= 16383 )
+                        continue;
                     clover_gamma[n_clover_gamma].clover_no = i;
                     clover_gamma[n_clover_gamma].crystal_no = j;
                     clover_gamma[n_clover_gamma].energy = CalibrateE(event.w_clover[i][j][k]);
@@ -554,10 +541,14 @@ bool UserSort::Sort(const Event &event)
             for ( j = 0 ; j < NUM_CLOVER_CRYSTALS ; ++j ){
                 for ( k = 0 ; k < event.n_clover[i][j] ; ++k ){
 
+                    if ( event.w_clover[i][j][k].adcdata >= 16383 ){
+                        have_been_counted[i][j][k] = true;
+                        continue;
+                    }
+
                     // First we check if we have analyzed this particular word previously.
                     if ( have_been_counted[i][j][k] )
                         continue; // Skip to next word.
-
                     have_been_counted[i][j][k] = true;
                     energy = CalibrateE(event.w_clover[i][j][k]);
                     double max_energy = energy;
@@ -572,6 +563,11 @@ bool UserSort::Sort(const Event &event)
                             // Increment the time spectrum!
                             tdiff = CalcTimediff(event.w_clover[i][j][k], event.w_clover[i][n][m]);
                             time_clover_addback[i]->Fill(tdiff, n);
+
+                            if ( event.w_clover[i][n][m].adcdata >= 16383 ){
+                                have_been_counted[i][n][m] = true;
+                                continue;
+                            }
 
                             if ( have_been_counted[i][n][m] ) // We always want to increment the time spectra, but not energies
                                 continue; // skip to next!
@@ -593,7 +589,52 @@ bool UserSort::Sort(const Event &event)
                     clover_gamma[n_clover_gamma].crystal_no = max_c;
                     clover_gamma[n_clover_gamma].energy = energy;
                     clover_gamma[n_clover_gamma++].max_w = max_word;
+                }
+            }
+        }
+    }
+    return n_clover_gamma;
+}
 
+
+bool UserSort::Sort(const Event &event)
+{
+    int i, j, k;
+    double energy;
+    double tdiff;
+
+    n_tot_e += event.tot_Edet;
+    n_tot_de_ring += event.tot_dEdet_ring;
+    n_tot_de_sect += event.tot_dEdet_sect;
+    tot += 1;
+
+    // For time alignments.
+    bool have_alginment_data = ( event.n_labr_2x2_fs[0] == 1 );
+    word_t start_alignment_word = event.w_labr_2x2_fs[0][0];
+    //bool have_alginment_data = true;//( GetDetector(event.trigger.address).detectorNum == 0 );
+    //word_t start_alignment_word = event.trigger;
+    //if (have_alginment_data == false)
+    //    start_alignment_word.address = 0;
+
+    delta_e_event_t de_events[256];
+    int n_de_events = 0;
+
+    clover_gamma_t clover_gamma[256];
+    int n_clover_gamma = 0;
+
+    n_clover_gamma = Addback_Clover(event, start_alignment_word, clover_gamma);
+
+
+    for ( i = 0 ; i < NUM_CLOVER_DETECTORS ; ++i ){
+        for ( j = 0 ; j < NUM_CLOVER_CRYSTALS ; ++j ){
+            for (k = 0 ; k < event.n_clover[i][j] ; ++k){
+                energy_clover_raw[i][j]->Fill(event.w_clover[i][j][k].adcdata);
+                energy = CalibrateE(event.w_clover[i][j][k]);
+                energy_clover[i][j]->Fill(energy);
+
+                if ( have_alginment_data ){
+                    tdiff = CalcTimediff(start_alignment_word, event.w_clover[i][j][k]);
+                    align_time_clover[i]->Fill(tdiff, j);
                 }
             }
         }
@@ -653,9 +694,6 @@ bool UserSort::Sort(const Event &event)
             // Check if bellongs to the 'trigger' event
             tdiff = CalcTimediff(event.trigger, event.w_dEdet_ring[i][j]);
             prompt_de_ring->Fill(tdiff, i);
-            if ( CheckTimeStatus(tdiff, particle_ring_cuts) /*== is_prompt*/ ){
-                de_words[n_de_words++] = event.w_dEdet_ring[i][j];
-            }
 
             if (event.w_dEdet_ring[i][j].cfdfail > 0) // For 'statistical' purposes!
                 ++n_fail_de_ring;
@@ -677,9 +715,6 @@ bool UserSort::Sort(const Event &event)
             // Check if bellongs to the 'trigger' event
             tdiff = CalcTimediff(event.trigger, event.w_dEdet_sect[i][j]);
             prompt_de_sect->Fill(tdiff, i);
-            if ( CheckTimeStatus(tdiff, particle_sect_cuts) /*== is_prompt*/ ){
-                de_words[n_de_words++] = event.w_dEdet_sect[i][j];
-            }
 
             if (event.w_dEdet_sect[i][j].cfdfail > 0) // For 'statistical' purposes!
                 ++n_fail_de_sect;
@@ -703,70 +738,95 @@ bool UserSort::Sort(const Event &event)
         }
     }
 
-    n_de_words = 0;
 
-    if ( event.tot_dEdet_ring == 1 && event.tot_dEdet_sect == 1){
-        for (int i = 0 ; i < NUM_SI_DE_RING ; ++i){
-            for (int j = 0 ; j < event.n_dEdet_ring[i] ; ++j){
-                de_words[n_de_words++] = event.w_dEdet_ring[i][j];
-            }
-        }
-        for (int i = 0 ; i < NUM_SI_DE_SECT ; ++i){
-            for (int j = 0 ; j < event.n_dEdet_sect[i] ; ++j){
-                de_words[n_de_words++] = event.w_dEdet_sect[i][j];
+    for ( i = 0 ; i < NUM_SI_DE_RING ; ++i){
+        for ( j = 0 ; j < event.n_dEdet_ring[i] ; ++j){
+            for (int m = 0 ; m < NUM_SI_DE_SECT ; ++m){
+                for (int n = 0 ; n < event.n_dEdet_sect[m] ; ++n){
+                    tdiff = CalcTimediff(event.w_dEdet_ring[i][j], event.w_dEdet_sect[m][n]);
+                    time_ring_sect[m]->Fill(tdiff, i);
+
+                    // check if is in 'coincidense'
+                    if ( CheckTimeStatus(tdiff, particle_sect_ring_cuts) == is_prompt && n_de_events < 256 ){
+                           de_events[n_de_events].ring_event = event.w_dEdet_ring[i][j];
+                           de_events[n_de_events++].sect_event = event.w_dEdet_sect[m][n];
+                    }
+                }
             }
         }
     }
 
+    //future_addback.wait();
+    //n_clover_gamma = future_addback.get();
 
-    // Check if only one dE detector of the trapezoidal has fired.
-    if ( n_de_words == 2 ){
+    // Loop over all dE events and plot particles.
+    for ( i = 0 ; i < n_de_events ; ++i){
 
+        word_t de_word = de_events[i].ring_event;
+        word_t de_word_sect = de_events[i].sect_event;
         word_t e_word = event.trigger;
-        word_t de_word_r = de_words[0];
-        word_t de_word_s = de_words[1];
 
-        int ring = GetDetector(de_word_r.address).detectorNum;
-        int sect = GetDetector(de_word_s.address).detectorNum;
+
+        int ring = GetDetector(de_word.address).detectorNum;
+        int sect = GetDetector(de_events[i].sect_event.address).detectorNum;
         int sect_e = GetDetector(e_word.address).detectorNum;
 
         double e_energy = CalibrateE(e_word);
-        double de_energy = CalibrateE(de_word_s);
+        double de_energy = CalibrateE(de_word_sect);
 
-        ede_raw[sect_e][ring]->Fill(e_word.adcdata, de_word_s.adcdata);
+        double time_ring = CalcTimediff(de_word, e_word);
+        double time_sect = CalcTimediff(de_word_sect, e_word);
 
-        if (!(ring < 16 || ring > 27))
-            return true;
+        prompt_de_ring->Fill(time_ring, ring);
+        prompt_de_sect->Fill(time_sect, sect);
 
+
+
+
+        // Check if we are prompt
+        if ( CheckTimeStatus(time_sect, particle_sect_cuts) != is_prompt ) // Skip if not prompt
+            continue;
+
+        ede_raw[sect_e][ring]->Fill(e_word.adcdata, de_word.adcdata);
         ede[sect_e][ring]->Fill(e_energy, de_energy);
+        ede_raw_sect[sect][ring]->Fill(e_energy, de_word_sect.adcdata);
         ede_all->Fill(e_energy, de_energy);
 
+        // For now, we exclude ring 16 up to 27.
+        if (ring >= 16 && ring <= 27)
+            continue;
+
+        // Chalculate the apparent thickness
         double thick = range.GetRange(e_energy + de_energy) - range.GetRange(e_energy);
 
-        if (ring < 16 && sect_e == 0)
-            h_thick->Fill(thick);
+        if (ring == 14)
+            h_thick->Fill(thick, e_energy);
 
         if (thick >= thick_range[0] && thick <= thick_range[1]){
-            h_ede[sect_e][ring]->Fill(e_energy + de_energy);
-            h_ede_ring[ring]->Fill(e_energy+de_energy);
+            // Now we will look at the time-difference vs. e-energy
+            time_energy_e->Fill(e_energy, time_sect);
+            ede_gate->Fill(e_energy, de_energy);
 
             double excitation = ex_from_ede[ring*3] + ex_from_ede[ring*3 + 1]*(e_energy + de_energy)*1e-3 + ex_from_ede[ring*3+2]*pow((e_energy + de_energy)*1e-3, 2);
             excitation *= 1e3;
-            h_ex[sect_e][ring]->Fill(excitation);
+            h_ex[ring]->Fill(excitation);
             h_ex_all->Fill(excitation);
-            AnalyzeGamma(de_word_s, excitation, event);
 
+            // Wait for addback...
+
+
+            AnalyzeGamma(de_word, excitation, event, clover_gamma, n_clover_gamma);
         }
-
-
     }
+
+
 
     return true;
 
 }
 
 
-void UserSort::AnalyzeGamma(const word_t &de_word, const double &excitation,const Event &event)
+void UserSort::AnalyzeGamma(const word_t &de_word, const double &excitation, const Event &event, const clover_gamma_t *c_gamma, const int n_clover)
 {
 
     // We will loop over all gamma-rays.
@@ -776,7 +836,7 @@ void UserSort::AnalyzeGamma(const word_t &de_word, const double &excitation,cons
             // Get energy and time of the gamma-ray.
 
             double energy = CalibrateE(event.w_labr_3x8[i][j]);
-            double tdiff = CalcTimediff(de_word, event.w_labr_3x8[i][j]);
+            double tdiff = CalcTimediff(event.trigger, event.w_labr_3x8[i][j]);
 
             // Fill time spectra.
             prompt_labr_3x8->Fill(tdiff, i);
@@ -798,6 +858,37 @@ void UserSort::AnalyzeGamma(const word_t &de_word, const double &excitation,cons
                 }
             }
         }
+    }
+
+
+    for (int i = 0 ; i < n_clover ; ++i){
+
+        double energy = c_gamma[i].energy;
+        double tdiff = CalcTimediff(event.trigger, c_gamma[i].max_w);
+
+        // Fill time spectra
+        prompt_clover->Fill(tdiff, c_gamma[i].clover_no);
+
+
+        // Check if prompt or not.
+        switch ( CheckTimeStatus(tdiff, clover_time_cuts) ) {
+
+            case is_prompt : {
+                alfna_clover->Fill(energy, excitation);
+                break;
+            }
+
+            case is_background : {
+                alfna_clover->Fill(energy, excitation, -1);
+                alfna_clover_bg->Fill(energy, excitation);
+                break;
+            }
+
+            case ignore :
+                break;
+
+        }
+
     }
 
     return;

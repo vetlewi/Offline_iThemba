@@ -24,6 +24,14 @@
 #include "TDRRoutine.h"
 #include "Event.h"
 
+typedef struct {
+    double energy;  //!< Energy of the event
+    int clover_no;  //!< Clover ID.
+    int crystal_no; //!< Crystal number (with largest energy deposition)
+    word_t max_w;   //!< Word of the hit with the largest energy.
+} clover_gamma_t;
+
+
 class UserSort : public TDRRoutine
 {
 public:
@@ -64,12 +72,16 @@ private:
     // Method for analyzing and checking conincident gamma events.
     void AnalyzeGamma(const word_t &de_word,    /*!< We need the de_word for the start time         */
                       const double &excitation, /*!< We need the reconstructed excitation energy    */
-                      const Event &event        /*!< Event structure.                               */);
+                      const Event &event,       /*!< Event structure.                               */
+                      const clover_gamma_t *cg, /*!< List of gamma rays in the clover detectors     */
+                      const int n_clover        /*!< Number of clover events                        */);
 
     // Method for analyzing and checking coinicident gamma-ppac events.
     void AnalyzeGammaPPAC(const word_t &de_word,    /*!< We need the de_word for the start time         */
                           const double &excitation, /*!< We need the reconstructed excitation energy    */
                           const Event &event        /*!< Event structure.                               */);
+
+    int Addback_Clover(const Event &event, const word_t &align_t, clover_gamma_t *clover_gamma);
 
     // SINGLES energy histograms.
     Histogram1Dp energy_clover_raw[NUM_CLOVER_DETECTORS][NUM_CLOVER_CRYSTALS], energy_clover[NUM_CLOVER_DETECTORS][NUM_CLOVER_CRYSTALS];
@@ -77,7 +89,7 @@ private:
     Histogram1Dp energy_labr_2x2_ss_raw[NUM_LABR_2X2_DETECTORS], energy_labr_2x2_ss[NUM_LABR_2X2_DETECTORS];
     Histogram1Dp energy_labr_2x2_fs_raw[NUM_LABR_2X2_DETECTORS], energy_labr_2x2_fs[NUM_LABR_2X2_DETECTORS];
     Histogram1Dp energy_dE_ring_raw[NUM_SI_DE_RING], energy_dE_ring[NUM_SI_DE_RING];
-    Histogram1Dp energy_dE_sect_raw[NUM_SI_DE_RING], energy_dE_sect[NUM_SI_DE_RING];
+    Histogram1Dp energy_dE_sect_raw[NUM_SI_DE_SECT], energy_dE_sect[NUM_SI_DE_SECT];
     Histogram1Dp energy_E_raw[NUM_SI_E_DET], energy_E[NUM_SI_E_DET];
 
     // Time alignment spectra
@@ -86,28 +98,31 @@ private:
     Histogram2Dp align_time_labr_2x2_ss, align_time_labr_2x2_fs;
     Histogram2Dp align_time_de_ring, align_time_de_sect;
     Histogram2Dp align_time_e;
+    Histogram2Dp time_ring_sect[NUM_SI_DE_SECT];
 
     // Addback spectra
     Histogram1Dp energy_clover_addback[NUM_CLOVER_DETECTORS];
     Histogram2Dp time_clover_addback[NUM_CLOVER_DETECTORS];
 
-    // Prompt time spectra
+    // Timediff to the 'trigger'.
     Histogram2Dp prompt_de_ring, prompt_de_sect;
-    Histogram2Dp prompt_labr_3x8;
+    Histogram2Dp prompt_labr_3x8, prompt_clover;
+
+    // Time vs. energy E detector
+    Histogram2Dp time_energy_e;
 
     // dE vs E
-    Histogram2Dp ede_raw[NUM_SI_E_DET][NUM_SI_RINGS], ede[NUM_SI_E_DET][NUM_SI_RINGS];
+    Histogram2Dp ede_raw[NUM_SI_E_DET][NUM_SI_DE_RING], ede[NUM_SI_E_DET][NUM_SI_DE_RING];
+    Histogram2Dp ede_raw_sect[NUM_SI_DE_SECT][NUM_SI_DE_RING];
     Histogram2Dp ede_all, ede_gate;
 
-    // Misc. dE/E coincidence spectra stuff.
-    Histogram1Dp h_thick;   // "Apparent" thickness spectra.
-    Histogram1Dp h_ede[NUM_SI_E_DET][NUM_SI_RINGS], h_ede_all; // Total energy deposited after particle gate.
-    Histogram1Dp h_ex[NUM_SI_E_DET][NUM_SI_RINGS], h_ex_all; // Excitation energy.
-    Histogram1Dp h_ede_ring[NUM_SI_DE_RING];
+    // 'Thickness figure'
+    Histogram2Dp h_thick;
+    Histogram1Dp h_ex_all, h_ex[NUM_SI_DE_RING];
 
     // Particle - gamma-ray coincidence matrix
     Histogram2Dp alfna, alfna_bg;
-    Histogram2Dp alfna_ppac, alfna_ppac_bg;
+    Histogram2Dp alfna_clover, alfna_clover_bg;
     Histogram2Dp alfna_veto_ppac, alfna_veto_ppac_bg;
 
     // Gain clover
@@ -182,6 +197,9 @@ private:
     // Time gates for the LaBr 3.5x8 detectors, e.g. for making the ALFNA matrices
     Parameter labr_3x8_time_cuts;
 
+    // Time gates for the CLOVER detectors, e.g. for making the ALFNA matrices
+    Parameter clover_time_cuts;
+
     // Time gates for the LaBr 2x2 (slow) detectors, e.g. for making the ALFNA matrices
     Parameter labr_2x2_ss_time_cuts;
 
@@ -196,6 +214,9 @@ private:
 
     // Time gates for the dE sector.
     Parameter particle_sect_cuts;
+
+    // Time gates for the dE sectors vs rings.
+    Parameter particle_sect_ring_cuts;
 
 
     int64_t n_fail_de_ring, n_fail_de_sect, n_fail_e;
