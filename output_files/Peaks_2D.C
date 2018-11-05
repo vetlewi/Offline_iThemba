@@ -495,8 +495,8 @@ Peaks_EDE::Peaks_EDE(const char* on, int back, int front, int peak)
 
 // ------------------------------------------------------------------------
 
-const int Peaks_EDE::nPeaks = 4;
-const int Peaks_EDE::nFront = 48;
+const int Peaks_EDE::nPeaks = 2;
+const int Peaks_EDE::nFront = 1;
 const int Peaks_EDE::nBack = 16;
 
 // ------------------------------------------------------------------------
@@ -525,7 +525,7 @@ TH2* Peaks_EDE::NextMatrix()
 
     // build matrix name
     char tmp[128];
-    snprintf(tmp, sizeof(tmp), "ede_raw_b%02d_f%02d", iBack, iFront);
+    snprintf(tmp, sizeof(tmp), "ede_s%02d_r%02d", iBack, /*iFront*/ 8);
 
     // find matrix
     return (TH2*)gDirectory->Get(tmp);
@@ -558,7 +558,7 @@ TH2* Peaks_EDE::NextDetector()
 
     // build matrix name
     char tmp[128];
-    snprintf(tmp, sizeof(tmp), "ede_raw_b%02d_f%02d", iBack, iFront);
+    snprintf(tmp, sizeof(tmp), "ede_s%02d_r%02d", iBack, iFront);
 
     // find matrix
     return (TH2*)gDirectory->Get(tmp);
@@ -573,7 +573,7 @@ void Peaks_EDE::ShowPeak(double px2d, double py2d, double pxp, double pyp)
 
     // const char* peakname[nPeaks] = {"12C_0M", "12C_4M", "12C_9M" };
     //const char* peakname[nPeaks] = {"", " ", " ", " ", " ", " ", " ", " ", " ", " " }; // Unnecessary, I fill it with blanks - JEM
-    const char* peakname[nPeaks] = {"63Ni_0M","62Ni_0M","62Ni_1M","62Ni_2M"};
+    const char* peakname[nPeaks] = {"63Ni_0M","62Ni_0M"};//,"62Ni_1M","62Ni_2M"};
     if( iPeak==0 )
         cout << "\tb(2d)=" << iBack << "\tf(2d)=" << iFront
              << "\tb(proj)=" << iBack << "\tf(proj)=" << iFront << endl;
