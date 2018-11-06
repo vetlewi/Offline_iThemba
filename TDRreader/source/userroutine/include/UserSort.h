@@ -49,6 +49,7 @@ public:
 
 protected:
     void CreateSpectra();
+    bool SetupTree();
 
 private:
 
@@ -218,6 +219,19 @@ private:
     // Time gates for the dE sectors vs rings.
     Parameter particle_sect_ring_cuts;
 
+    // Stuff needed for the ROOT tree
+    int eDet_ID, deDet_mult, labr3x8_mult, labr2x2_mult, clover_mult;
+    int labr3x8_ID[MAX_WORDS_PER_DET], labr2x2_ID[MAX_WORDS_PER_DET], clover_ID[MAX_WORDS_PER_DET];
+    int deDet_ringID[MAX_WORDS_PER_DET], deDet_sectID[MAX_WORDS_PER_DET];
+    double eDet_energy, eDet_timestamp_fine;
+    int64_t eDet_timestamp_course;
+    double labr3x8_energy[MAX_WORDS_PER_DET], labr2x2_energy[MAX_WORDS_PER_DET], clover_energy[MAX_WORDS_PER_DET];
+    double labr3x8_timestamp_fine[MAX_WORDS_PER_DET], labr2x2_timestamp_fine[MAX_WORDS_PER_DET], clover_timestamp_fine[MAX_WORDS_PER_DET];
+    int64_t labr3x8_timestamp_coarse[MAX_WORDS_PER_DET], labr2x2_timestamp_coarse[MAX_WORDS_PER_DET], clover_timestamp_coarse[MAX_WORDS_PER_DET];
+    double deDet_ring_energy[MAX_WORDS_PER_DET], deDet_sect_energy[MAX_WORDS_PER_DET];
+    double deDet_ring_timestamp_fine[MAX_WORDS_PER_DET], deDet_sect_timestamp_fine[MAX_WORDS_PER_DET];
+    int64_t deDet_ring_timestamp_coarse[MAX_WORDS_PER_DET], deDet_sect_timestamp_coarse[MAX_WORDS_PER_DET];
+    bool is_opt;
 
     int64_t n_fail_de_ring, n_fail_de_sect, n_fail_e;
 

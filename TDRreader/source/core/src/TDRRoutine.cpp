@@ -37,6 +37,8 @@
 #include <sstream>
 #include <iostream>
 
+#include <TFile.h>
+#include <TTree.h>
 
 TDRRoutine::TDRRoutine()
 { }
@@ -65,6 +67,11 @@ bool TDRRoutine::Command(const std::string& cmd)
         icmd >> fname;
         range.Read(fname);
         return true;
+    } else if (name == "root" || name == "ROOT" ){
+        std::string tr_name;
+        icmd >> tr_name;
+        root_file = new TFile(tr_name.c_str(), "RECREATE");
+        return SetupTree();
     } else {
         //std::cerr << "TDRRoutine: Unknown command '" << cmd << "'\n";
         return UserCommand(cmd);

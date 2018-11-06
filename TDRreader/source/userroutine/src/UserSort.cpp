@@ -40,6 +40,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include <TFile.h>
+#include <TTree.h>
+
 typedef struct {
     word_t ring_event;
     word_t sect_event;
@@ -298,6 +301,51 @@ bool UserSort::UserCommand(const std::string &cmd)
     return true;
 }
 
+bool UserSort::SetupTree()
+{
+    // First we need to check that a file is actually mounted.
+    if ( !root_file )
+        return false;
+
+    root_tree = new TTree("data","data");
+
+    root_tree->Branch("eDet_ID", &eDet_ID, "eDet_ID/I");
+    root_tree->Branch("eDet_energy",&eDet_energy,"eDet_energy/D");
+    root_tree->Branch("eDet_timestamp_coarse", &eDet_timestamp_course, "eDet_timestamp_course/L");
+    root_tree->Branch("eDet_timestamp_fine", &eDet_timestamp_fine, "eDet_timestamp_fine/D");
+
+    root_tree->Branch("deDet_mult", &deDet_mult, "deDet_mult/I");
+    root_tree->Branch("deDet_ringID", &deDet_ringID, "deDet_ringID[deDet_mult]/I");
+    root_tree->Branch("deDet_sectID", &deDet_sectID, "deDet_sectID[deDet_mult]/I");
+    root_tree->Branch("deDet_ring_energy",&deDet_ring_energy,"deDet_ring_energy[deDet_mult]/D");
+    root_tree->Branch("deDet_sect_energy",&deDet_sect_energy,"deDet_sect_energy[deDet_mult]/D");
+    root_tree->Branch("deDet_ring_timestamp_coarse",&deDet_ring_timestamp_coarse,"deDet_ring_timestamp_coarse[deDet_mult]/L");
+    root_tree->Branch("deDet_sect_timestamp_coarse",&deDet_sect_timestamp_coarse,"deDet_sect_timestamp_coarse[deDet_mult]/L");
+    root_tree->Branch("deDet_ring_timestamp_fine",&deDet_ring_timestamp_fine,"deDet_ring_timestamp_fine[deDet_mult]/D");
+    root_tree->Branch("deDet_sect_timestamp_fine",&deDet_sect_timestamp_fine,"deDet_sect_timestamp_fine[deDet_mult]/D");
+
+    root_tree->Branch("labr3x8_mult",&labr3x8_mult,"labr3x8_mult/I");
+    root_tree->Branch("labr3x8_ID",&labr3x8_ID,"labr3x8_ID[labr3x8_mult]/I");
+    root_tree->Branch("labr3x8_energy",&labr3x8_energy,"labr3x8_energy[labr3x8_mult]/D");
+    root_tree->Branch("labr3x8_timestamp_coarse",&labr3x8_timestamp_coarse,"labr3x8_timestamp_coarse[labr3x8_mult]/L");
+    root_tree->Branch("labr3x8_timestamp_fine",&labr3x8_timestamp_fine,"labr3x8_timestamp_fine[labr3x8_mult]/D");
+
+    root_tree->Branch("labr2x2_mult",&labr2x2_mult,"labr2x2_mult/I");
+    root_tree->Branch("labr2x8_ID",&labr2x2_ID,"labr2x2_ID[labr2x2_mult]/I");
+    root_tree->Branch("labr2x2_energy",&labr2x2_energy,"labr2x2_energy[labr2x2_mult]/D");
+    root_tree->Branch("labr2x2_timestamp_coarse",&labr2x2_timestamp_coarse,"labr2x2_timestamp_coarse[labr2x2_mult]/L");
+    root_tree->Branch("labr2x2_timestamp_fine",&labr2x2_timestamp_fine,"labr2x2_timestamp_fine[labr2x2_mult]/D");
+
+    root_tree->Branch("clover_mult",&clover_mult,"clover_mult/I");
+    root_tree->Branch("clover_ID",&clover_ID,"clover_ID[clover_mult]/I");
+    root_tree->Branch("clover_energy",&clover_energy,"clover_energy[clover_mult]/D");
+    root_tree->Branch("clover_timestamp_coarse",&clover_timestamp_coarse,"clover_timestamp_coarse[clover_mult]/L");
+    root_tree->Branch("clover_timestamp_fine",&clover_timestamp_fine,"clover_timestamp_fine[clover_mult]/D");
+
+    //root_tree->SetAutoFlush(-3000);
+    is_opt = false;
+    return true;
+}
 
 void UserSort::CreateSpectra()
 {
@@ -379,7 +427,7 @@ void UserSort::CreateSpectra()
         energy_E[i] = Spec(tmp, tmp, 10000, 0, 10000, "Energy [keV]");
     }
 
-    int num_bin_ede = 500;
+    int num_bin_ede = 50;
     Axis::bin_t e_axis_low = 0;
     Axis::bin_t e_axis_high = 18000;
     Axis::bin_t de_axis_low = 0;
@@ -608,6 +656,14 @@ bool UserSort::Sort(const Event &event)
     n_tot_de_sect += event.tot_dEdet_sect;
     tot += 1;
 
+    eDet_ID = GetDetector(event.trigger.address).detectorNum;
+    eDet_energy = CalibrateE(event.trigger);
+    eDet_timestamp_course = event.trigger.timestamp;
+    eDet_timestamp_fine = event.trigger.timestamp + shift_time_e[eDet_ID];
+    deDet_mult = 0;
+    labr3x8_mult = 0;
+    clover_mult = 0;
+
     // For time alignments.
     bool have_alginment_data = ( event.n_labr_2x2_fs[0] == 1 );
     word_t start_alignment_word = event.w_labr_2x2_fs[0][0];
@@ -623,7 +679,13 @@ bool UserSort::Sort(const Event &event)
     int n_clover_gamma = 0;
 
     n_clover_gamma = Addback_Clover(event, start_alignment_word, clover_gamma);
-
+    clover_mult = n_clover_gamma;
+    for (i = 0 ; i < clover_mult ; ++i){
+        clover_energy[i] = clover_gamma[i].energy;
+        clover_ID[i] = clover_gamma[i].clover_no;
+        clover_timestamp_coarse[i] = clover_gamma[i].max_w.timestamp;
+        clover_timestamp_fine[i] = clover_gamma[i].max_w.cfdcorr + shift_time_clover[clover_gamma[i].clover_no*NUM_CLOVER_DETECTORS + clover_gamma[i].crystal_no];
+    }
 
     for ( i = 0 ; i < NUM_CLOVER_DETECTORS ; ++i ){
         for ( j = 0 ; j < NUM_CLOVER_CRYSTALS ; ++j ){
@@ -643,9 +705,14 @@ bool UserSort::Sort(const Event &event)
     // First fill some 'singles' spectra.
     for ( i = 0 ; i < NUM_LABR_3X8_DETECTORS ; ++i ){
         for ( j = 0 ; j < event.n_labr_3x8[i] ; ++j ){
+            labr3x8_ID[labr3x8_mult] = i;
             energy_labr_3x8_raw[i]->Fill(event.w_labr_3x8[i][j].adcdata);
             energy = CalibrateE(event.w_labr_3x8[i][j]);
+            labr3x8_energy[labr3x8_mult] = energy;
             energy_labr_3x8[i]->Fill(energy);
+            labr3x8_timestamp_coarse[labr3x8_mult] = event.w_labr_3x8[i][j].timestamp;
+            labr3x8_timestamp_fine[labr3x8_mult++] = event.w_labr_3x8[i][j].cfdcorr + shift_time_labr_3x8[i];
+
 
             // We align times
             if (have_alginment_data){
@@ -667,9 +734,14 @@ bool UserSort::Sort(const Event &event)
             }
         }
         for ( j = 0 ; j < event.n_labr_2x2_fs[i] ; ++j ){
+            labr2x2_ID[labr2x2_mult] = i;
             energy_labr_2x2_fs_raw[i]->Fill(event.w_labr_2x2_fs[i][j].adcdata);
             energy = CalibrateE(event.w_labr_2x2_fs[i][j]);
+            labr2x2_energy[labr2x2_mult] = energy;
             energy_labr_2x2_fs[i]->Fill(energy);
+            labr2x2_timestamp_coarse[labr2x2_mult] = event.w_labr_2x2_fs[i][j].timestamp;
+            labr2x2_timestamp_fine[labr2x2_mult++] = event.w_labr_2x2_fs[i][j].cfdcorr + shift_time_labr_2x2_fs[i];
+
 
             // We align times
             if (have_alginment_data){
@@ -748,6 +820,15 @@ bool UserSort::Sort(const Event &event)
 
                     // check if is in 'coincidense'
                     if ( CheckTimeStatus(tdiff, particle_sect_ring_cuts) == is_prompt && n_de_events < 256 ){
+                            deDet_ringID[deDet_mult] = i;
+                            deDet_sectID[deDet_mult] = m;
+                            deDet_ring_energy[deDet_mult] = CalibrateE(event.w_dEdet_ring[i][j]);
+                            deDet_sect_energy[deDet_mult] = CalibrateE(event.w_dEdet_sect[m][n]);
+                            deDet_ring_timestamp_coarse[deDet_mult] = event.w_dEdet_ring[i][j].timestamp;
+                            deDet_sect_timestamp_coarse[deDet_mult] = event.w_dEdet_sect[m][n].timestamp;
+                            deDet_ring_timestamp_fine[deDet_mult] = event.w_dEdet_ring[i][j].cfdcorr + shift_time_de_ring[GetDetector(event.w_dEdet_ring[i][j].address).detectorNum];
+                            deDet_sect_timestamp_fine[deDet_mult++] = event.w_dEdet_sect[m][n].cfdcorr + shift_time_de_sect[GetDetector(event.w_dEdet_sect[m][n].address).detectorNum];
+
                            de_events[n_de_events].ring_event = event.w_dEdet_ring[i][j];
                            de_events[n_de_events++].sect_event = event.w_dEdet_sect[m][n];
                     }
@@ -756,11 +837,17 @@ bool UserSort::Sort(const Event &event)
         }
     }
 
-    //future_addback.wait();
-    //n_clover_gamma = future_addback.get();
+    // Now we may write to file, if and only if the tree is actually set.
+    if (root_tree)
+        root_tree->Fill();
+
+    if ( root_tree &&  n_fail_e > 5000 && !is_opt ){
+        root_tree->OptimizeBaskets();
+        is_opt = true;
+    }
 
     // Loop over all dE events and plot particles.
-    for ( i = 0 ; i < n_de_events ; ++i){
+    /*for ( i = 0 ; i < n_de_events ; ++i){
 
         word_t de_word = de_events[i].ring_event;
         word_t de_word_sect = de_events[i].sect_event;
@@ -817,7 +904,7 @@ bool UserSort::Sort(const Event &event)
 
             AnalyzeGamma(de_word, excitation, event, clover_gamma, n_clover_gamma);
         }
-    }
+    }*/
 
 
 
@@ -910,6 +997,10 @@ UserSort::prompt_status_t UserSort::CheckTimeStatus(const double &time, const Pa
 
 bool UserSort::End()
 {
+    if (root_file){
+        root_file->Write(0,TObject::kOverwrite);
+        root_file->Close();
+    }
     std::cout << "Stats info: " << std::endl;
     std::cout << "CFD fails in E - detectors: " << n_fail_e << std::endl;
     std::cout << "CFD fails in dE ring - detectors: " << n_fail_de_ring << std::endl;

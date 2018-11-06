@@ -30,6 +30,9 @@
 #include <cstdint>
 #include <cstdlib>
 
+#include <TTree.h>
+#include <TFile.h>
+
 
 /*!
  * \class TDRRoutine
@@ -76,11 +79,21 @@ protected:
     //! Range curve
     ParticleRange range;
 
+    //! Pointer to the TFile
+    TFile *root_file;
+
+    //! Pointer to the TTree
+    TTree *root_tree;
 
 	//! Create all spectra.
 	/*! This method must be implemented in a class deriving from TDRRoutine.
 	 */
 	virtual void CreateSpectra() = 0;
+
+    //! Setup the ROOT tree.
+    /*! This method must be implemented in a class deriving from TDRRoutine.
+     */
+    virtual bool SetupTree() = 0;
 
 	//! Create a 1D histogram.
     /*! \return a pointer to a new 1D histogram.
