@@ -99,6 +99,8 @@ static double shift_t_e[NUM_SI_E_DET] = {
     -261.175,	-260.892,	-260.827,	-261.034,	-259.259,	-259.522,	-261.394,	-259.957,
     -260.040,	-266.265,	-259.761,	-265.653,	-260.488,	-264.456,	-260.842,	-266.389};
 
+static double clover_addback_gate[2] = {-75.0, 75.0};
+
 double CalibrateEnergy(const word_t &detector)
 {
     DetectorInfo_t dinfo = GetDetector(detector.address);
@@ -143,4 +145,9 @@ double CalibrateTime(const word_t &detector)
         default :
             return detector.cfdcorr;
     }
+}
+
+bool CheckTimeGateAddback(const double &timediff)
+{
+   return (timediff >= clover_addback_gate[0] && timediff <= clover_addback_gate[1]) ? true : false;
 }
