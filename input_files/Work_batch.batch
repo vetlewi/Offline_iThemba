@@ -3,6 +3,8 @@ Gain file /Users/vetlewi/Documents/coding/offline_iThemba/input_files/Gain_shift
 
 range /Users/vetlewi/Documents/coding/offline_iThemba/input_files/zrange_d.dat
 
+#root /Users/vetlewi/Documents/coding/offline_iThemba/output_files/work_tree.root
+
 parameter thick_range = 310 410
 
 parameter ex_from_ede = \
@@ -142,19 +144,19 @@ parameter shift_time_de_sect = \
 data directory /Volumes/PR282/PR282
 
 data file R73_0
-data file R73_1
-data file R73_2
-data file R73_3
-data file R73_4
-data file R73_5
-data file R73_6
-data file R73_7
-data file R73_8
-data file R73_9
-data file R73_10
-data file R73_11
-data file R73_12
-data file R73_13
-data file R73_14
+#data file R73_1
+#data file R73_2
+#data file R73_3
+#data file R73_4
+#data file R73_5
+#data file R73_6
+#data file R73_7
+#data file R73_8
+#data file R73_9
+#data file R73_10
+#data file R73_11
+#data file R73_12
+#data file R73_13
+#data file R73_14
 
 export root /Users/vetlewi/Documents/coding/Offline_iThemba/output_files/Working.root

@@ -21,6 +21,91 @@ typedef struct {
     word_t max_w;
 } clover_gamma_t;
 
+class time_type : public TObject
+{
+public:
+
+    //! Constructor
+    time_type(int64_t tc=0, double tf=0)
+        : time_coarse( tc )
+        , time_fine( tf )
+    {}
+
+    time_type(const time_type &tt)
+        : time_coarse( tt.time_coarse )
+        , time_fine( tt.time_fine )
+    {}
+
+    //! Coarse time, 64 bit integer
+    int64_t time_coarse;
+
+    //! Fine time, floating point
+    double time_fine;
+
+    //! Overload of the - operator
+    time_type &operator-(const time_type &tt)
+    {
+        time_coarse -= tt.time_coarse;
+        time_fine -= tt.time_fine;
+        return *this;
+    }
+
+    //! Overload of the + operator
+    time_type &operator+(const time_type &&tt)
+    {
+        time_coarse += tt.time_coarse;
+        time_fine += tt.time_fine;
+        return *this;
+    }
+
+    time_type &operator+=(const time_type &tt)
+    {
+        time_coarse += tt.time_coarse;
+        time_fine += tt.time_fine;
+        return *this;
+    }
+
+    time_type operator-=(const time_type &tt)
+    {
+        time_coarse -= tt.time_coarse;
+        time_fine -= tt.time_fine;
+        return *this;
+    }
+
+};
+
+inline double operator-(const time_type &lhs, const time_type &rhs)
+{
+    time_type res = lhs;
+    res -= rhs;
+    return res.time_coarse + res.time_fine;
+}
+
+inline double operator+(const time_type &lhs, const time_type &rhs)
+{
+    time_type res = lhs;
+    res += rhs;
+    return res.time_coarse + res.time_fine;
+}
+
+typedef time_type time_ts;
+
+class gamma_class : public TObject
+{
+public:
+    // Time of the arrival...
+    int16_t ID;
+    double energy;
+
+};
+
+struct gamma_type_t {
+    int ID;
+    double energy;
+    int64_t time_large;
+    double time_fine;
+};
+
 typedef struct {
     word_t w_clover[NUM_CLOVER_DETECTORS][NUM_CLOVER_CRYSTALS][NUM_MAX];
     int n_clover[NUM_CLOVER_DETECTORS][NUM_CLOVER_CRYSTALS];
@@ -158,9 +243,10 @@ void Convert_to_ROOT(std::vector<std::string> files,    /*!< Raw binary files to
     TFile *fout = new TFile(rfile.c_str(), "RECREATE");
     TTree *tree = new TTree("data","data");
 
-    int16_t deDet_ringID;
+    int16_t deDet_ring_mult, deDet_ringID;
     double deDet_ringE, deDet_ring_time_fine;
     int64_t deDet_ring_time_course;
+    tree->Branch("deDet_ring_mult", &deDet_ring_mult, "deDet_ring_mult/S");
     tree->Branch("deDet_ringID", &deDet_ringID, "deDet_ringID/S");
     tree->Branch("deDet_ringE", &deDet_ringE, "deDet_ringE/D");
     tree->Branch("deDet_ring_time_fine", &deDet_ring_time_fine, "deDet_ring_time_fine/D");
