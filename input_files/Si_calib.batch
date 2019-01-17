@@ -1,7 +1,7 @@
 # Importing the gain shit information.
-Gain file /Users/vetlewi/Documents/coding/offline_iThemba/input_files/Gain_shift_64Ni_run.dat
+Gain file //home/hannahcb/new_sort/Offline_iThemba/input_files/Gain_shift_64Ni_run.dat
 
-range /Users/vetlewi/Documents/coding/offline_iThemba/input_files/zrange_d.dat
+range /home/hannahcb/new_sort/Offline_iThemba/input_files/zrange_d.dat
 
 parameter thick_range = 190 290
 
@@ -53,7 +53,7 @@ parameter ex_from_ede = \
 19.233966 -0.954979 -0.001371 \
 19.228381 -0.954894 -0.001376 \
 19.222781 -0.954807 -0.001380 \
-19.217167 -0.954717 -0.001384 
+19.217167 -0.954717 -0.001384
 
 parameter labr_3x8_time_cuts = -20.0 100.0 360.0 460.0
 parameter clover_addback_cuts = -75.0 75.0 600.0 750.0
@@ -131,44 +131,207 @@ parameter shift_time_de_sect = \
 #	12	1
 #	13	14
 #	14	0
-#	15	15						
+#	15	15
 
 
 # Now we will need to read files... There is a lot of the :O
 data directory /Volumes/PR282/PR282
 
-data file R77_0
-#data file R77_1
-#data file R77_2
-#data file R77_3
-#data file R77_4
-#data file R77_5
-#data file R77_6
-#data file R77_7
-#data file R77_8
-#data file R77_9
-#data file R78_0
-#data file R78_1
-#data file R78_2
-#data file R78_3
-#data file R78_4
-#data file R78_5
-#data file R78_6
-#data file R78_7
-#data file R78_8
-#data file R78_9
-#data file R78_10
-#data file R78_11
-#data file R78_12
-#data file R78_13
-#data file R78_14
-#data file R78_15
-#data file R78_16
-#data file R78_17
-#data file R78_18
-#data file R78_19
-#data file R78_20
-#data file R78_21
+data file R73_0
+data file R73_1
+data file R73_2
+data file R73_3
+data file R73_4
+data file R73_5
+data file R73_6
+data file R73_7
+data file R73_8
+data file R73_9
+data file R73_10
+data file R73_11
+data file R73_12
+data file R73_13
+data file R73_14
 
+data file R74_0
+data file R74_1
+data file R74_2
+data file R74_3
+data file R74_4
+data file R74_5
+data file R74_6
+data file R74_7
+data file R74_8
+data file R74_9
+data file R74_10
+data file R74_11
+data file R74_12
+data file R74_13
+data file R74_14
+data file R74_15
+data file R74_16
+data file R74_17
+data file R74_18
+data file R74_19
+
+data file R76_0
+data file R76_1
+data file R76_2
+data file R76_3
+data file R76_4
+data file R76_5
+data file R76_6
+data file R76_7
+data file R76_8
+data file R76_9
+data file R76_10
+data file R76_11
+data file R76_12
+data file R76_13
+data file R76_14
+data file R76_15
+data file R76_16
+data file R76_17
+data file R76_18
+
+data file R77_0
+data file R77_1
+data file R77_2
+data file R77_3
+data file R77_4
+data file R77_5
+data file R77_6
+data file R77_7
+data file R77_8
+data file R77_9
+
+data file R78_0
+data file R78_1
+data file R78_2
+data file R78_3
+data file R78_4
+data file R78_5
+data file R78_6
+data file R78_7
+data file R78_8
+data file R78_9
+data file R78_10
+data file R78_11
+data file R78_12
+data file R78_13
+data file R78_14
+data file R78_15
+data file R78_16
+data file R78_17
+data file R78_18
+data file R78_19
+data file R78_20
+data file R78_21
+
+data file R80_0
+data file R80_1
+data file R80_2
+data file R80_3
+data file R80_4
+data file R80_5
+data file R80_6
+data file R80_7
+data file R80_8
+data file R80_9
+data file R80_10
+data file R80_11
+data file R80_12
+data file R80_13
+data file R80_14
+data file R80_15
+data file R80_16
+data file R80_17
+data file R80_18
+
+data file R81_0
+data file R81_1
+data file R81_2
+data file R81_3
+data file R81_4
+data file R81_5
+data file R81_6
+data file R81_7
+data file R81_8
+
+data file R82_0
+data file R82_1
+data file R82_2
+data file R82_3
+data file R82_4
+data file R82_5
+data file R82_6
+data file R82_7
+data file R82_8
+data file R82_9
+data file R82_10
+data file R82_11
+data file R82_12
+data file R82_13
+data file R82_14
+data file R82_15
+data file R82_16
+
+data file R83_0
+data file R83_1
+data file R83_2
+data file R83_3
+data file R83_4
+data file R83_5
+data file R83_6
+data file R83_7
+data file R83_8
+data file R83_9
+data file R83_10
+data file R83_11
+data file R83_12
+data file R83_13
+data file R83_14
+data file R83_15
+data file R83_16
+data file R83_17
+
+data file R84_0
+data file R84_1
+data file R84_2
+data file R84_3
+data file R84_4
+data file R84_5
+data file R84_6
+data file R84_7
+data file R84_8
+data file R84_9
+data file R84_10
+data file R84_11
+data file R84_12
+data file R84_13
+data file R84_14
+data file R84_15
+data file R84_16
+
+data file R85_0
+data file R85_1
+data file R85_2
+data file R85_3
+data file R85_4
+data file R85_5
+
+data file R86_0
+data file R86_1
+data file R86_2
+data file R86_3
+data file R86_4
+data file R86_5
+data file R86_6
+data file R86_7
+data file R86_8
+data file R86_9
+data file R86_10
+data file R86_11
+data file R86_12
 
 export root /Users/vetlewi/Documents/coding/Offline_iThemba/output_files/Si_calib.root
