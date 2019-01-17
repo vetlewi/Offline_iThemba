@@ -131,7 +131,13 @@ CMakeLists.txt.user*
 # User project settings
 *.creator.user*
 
+# Qt stash files
+*.qmake.stash
+
 # Qt Creator backups
+
+# Binary output
+TDRreader
 
 
 # End of https://www.gitignore.io/api/c,qt,c++,qtcreator

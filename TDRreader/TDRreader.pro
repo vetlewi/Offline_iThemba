@@ -70,4 +70,4 @@ HEADERS += source/DefineFile.h \
         source/system/include/PixieSettings.h \
         source/system/include/BufferType.h \
         experimentsetup.h \
-    source/system/include/WordBuffer.h
+        source/system/include/WordBuffer.h

@@ -1,7 +1,7 @@
 # Importing the gain shit information.
-Gain file /Users/vetlewi/Documents/coding/offline_iThemba/input_files/Gain_shift_64Ni_run.dat
+Gain file /Users/hannahcb/progg/offline_iThemba/input_files/gain_shift_zeros.dat
 
-range /Users/vetlewi/Documents/coding/offline_iThemba/input_files/zrange_d.dat
+range /Users/hannahcb/progg/offline_iThemba/input_files/zrange_d.dat
 
 parameter thick_range = 190 290
 
@@ -24,8 +24,8 @@ parameter particle_ring_cuts = -4.0 4.0 50.0 60.0
 parameter particle_sect_cuts = -4.0 4.0 50.0 60.0
 
 # Now we will need to read files... There is a lot of the :O
-data directory /Volumes/PR282/PR282
+data directory /Volumes/PR271/PR271A
 
-data file R94_0
+data file R127_0
 
-export root /Users/vetlewi/Documents/coding/Offline_iThemba/output_files/Ni60_calib.root
+export root /Users/hannahcb/progg/Offline_iThemba/output_files/test.root
