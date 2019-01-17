@@ -6,14 +6,12 @@
 
 #define NUM_CLOVER_DETECTORS 10     //!< Number of Clover detectors
 #define NUM_CLOVER_CRYSTALS 4       //!< Number of Clover crystals per detector
-#define NUM_LABR_3X8_DETECTORS 2    //!< Number of LaBr detectors
+#define NUM_LABR_3X8_DETECTORS 6    //!< Number of LaBr detectors
 #define NUM_LABR_2X2_DETECTORS 6    //!< Number of LaBr detectors
 #define NUM_SI_DE_RING 48           //!< Number of Si dE rings
 #define NUM_SI_DE_SECT 16           //!< Number of Si dE sector
 #define NUM_SI_E_DET 16             //!< Number of E Si sections
-
 #define NUM_SI_RINGS 48         //!< Number of Si rings
-
 #define MAX_WORDS_PER_DET 32    //!< Maximum number of words per detector in each event
 
 
