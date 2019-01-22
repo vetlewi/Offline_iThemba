@@ -1,4 +1,4 @@
-Gain file /Users/hannahcb/progg/Offline_iThemba/input_files/gain_shift_second_cal.dat
+Gain file /Users/hannahcb/progg/Offline_iThemba/input_files/gain_shift_third_co60_cal.dat
 
 range /Users/hannahcb/progg/Offline_iThemba/input_files/zrange_d.dat
 
@@ -61,4 +61,4 @@ data file R134_1
 data file R134_2
 data file R134_3
 
-export root /Users/hannahcb/progg/Offline_iThemba/output_files/eu152_first.root
+export root /Users/hannahcb/progg/Offline_iThemba/output_files/eu152_w_co60_third.root

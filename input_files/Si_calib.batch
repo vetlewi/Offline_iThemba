@@ -59,6 +59,11 @@ parameter ex_from_ede = \
 # Now we will need to read files... There is a lot of the :O
 data directory /Volumes/PR271/PR271A
 
+parameter shift_time_de_sect = \
+-256.933	-248	-247.783	-247.512	-258.068	-252.823-251.597	-246.953	\
+-257.638	-246.287	-247.921	-248.655	-262.274	-248.364	-258.62	-258.887
+
+
 data file R128_0
 data file R128_1
 data file R128_2

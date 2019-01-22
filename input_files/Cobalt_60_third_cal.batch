@@ -1,4 +1,4 @@
-Gain file /Users/hannahcb/progg/Offline_iThemba/input_files/gain_shift_second_cal.dat
+Gain file /Users/hannahcb/progg/Offline_iThemba/input_files/gain_shift_third_co60_cal.dat
 
 range /Users/hannahcb/progg/Offline_iThemba/input_files/zrange_d.dat
 
@@ -56,9 +56,8 @@ parameter ex_from_ede = \
 
 data directory /Volumes/PR271/PR271A
 
-data file R134_0
-data file R134_1
-data file R134_2
-data file R134_3
+data file R137_0
+data file R137_1
+data file R137_2
 
-export root /Users/hannahcb/progg/Offline_iThemba/output_files/eu152_first.root
+export root /Users/hannahcb/progg/Offline_iThemba/output_files/co60_third.root
