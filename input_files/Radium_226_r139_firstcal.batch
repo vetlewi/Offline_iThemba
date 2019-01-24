@@ -56,6 +56,6 @@ parameter ex_from_ede = \
 
 data directory /Volumes/PR271/PR271A
 
-data file R138_0
+data file R139_0
 
-export root /Users/hannahcb/progg/Offline_iThemba/output_files/Ra226_dE_firstcal.root
+export root /Users/hannahcb/progg/Offline_iThemba/output_files/Ra226_E_firstcal.root
