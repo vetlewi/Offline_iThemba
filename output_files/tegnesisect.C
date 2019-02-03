@@ -2,7 +2,7 @@
 #include "TTree.h"
 #include "TColor.h"
 void tegnesisect(){
-    TFile *f = TFile::Open("Ra226_r2_E_secondcal.root");
+    TFile *f = TFile::Open("Ra226_E_fromr2cal.root");
     if (f==0){
         printf("Error: cannot open file");
         return;
@@ -23,7 +23,7 @@ void tegnesisect(){
     energy_E_06->SetLineColor(7);
     energy_E_07->SetLineColor(8);
     energy_E_08->SetLineColor(9);
-    energy_E_09->SetLineColor(10);
+    energy_E_09->SetLineColor(16);
     energy_E_10->SetLineColor(11);
     energy_E_11->SetLineColor(12);
     energy_E_12->SetLineColor(13);
@@ -39,12 +39,32 @@ void tegnesisect(){
     energy_E_07->Draw("same");
     energy_E_08->Draw("same");
     energy_E_09->Draw("same");
-    energy_E_10->Draw("same");
-    energy_E_11->Draw("same");
-    energy_E_12->Draw("same");
-    energy_E_13->Draw("same");
-    energy_E_14->Draw("same");
-    energy_E_15->Draw("same");
+    // energy_E_10->Draw("same");
+    // energy_E_11->Draw("same");
+    // energy_E_12->Draw("same");
+    // energy_E_13->Draw("same");
+    // energy_E_14->Draw("same");
+    // energy_E_15->Draw("same");
+
+    auto legend = new TLegend(0.6,0.7,0.9,0.9); //x1, y1,x2.y2
+    legend->AddEntry(energy_E_00,"energy_E_00","l");
+    legend->AddEntry(energy_E_01,"energy_E_01","l");
+    legend->AddEntry(energy_E_02,"energy_E_02","l");
+    legend->AddEntry(energy_E_03,"energy_E_03","l");
+    legend->AddEntry(energy_E_04,"energy_E_04","l");
+    legend->AddEntry(energy_E_05,"energy_E_05","l");
+    legend->AddEntry(energy_E_06,"energy_E_06","l");
+    legend->AddEntry(energy_E_07,"energy_E_07","l");
+    legend->AddEntry(energy_E_08,"energy_E_08","l");
+    legend->AddEntry(energy_E_09,"energy_E_09","l");
+    legend->AddEntry(energy_E_10,"energy_E_10","l");
+    legend->AddEntry(energy_E_11,"energy_E_11","l");
+    legend->AddEntry(energy_E_12,"energy_E_12","l");
+    legend->AddEntry(energy_E_13,"energy_E_13","l");
+    legend->AddEntry(energy_E_14,"energy_E_14","l");
+    legend->AddEntry(energy_E_15,"energy_E_15","l");
+
+    legend->Draw();
 
     // energy_clover_01D->SetLineColor(4);
     // energy_clover_01B->Draw("same");

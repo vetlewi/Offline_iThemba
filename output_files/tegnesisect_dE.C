@@ -11,7 +11,7 @@ void tegnesisect_dE(){
     gStyle->SetPalette(1);
 
     energy_dE_sect_00->GetXaxis()->CenterTitle();
-	energy_dE_sect_00->SetTitle("dE-sect");
+	energy_dE_sect_00->SetTitle(" ");
 
     energy_dE_sect_00->SetLineColor(1);
     energy_dE_sect_00->Draw("");

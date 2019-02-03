@@ -1,4 +1,4 @@
-Gain file /Users/hannahcb/progg/Offline_iThemba/input_files/gain_shift_si.dat
+Gain file /Users/hannahcb/progg/Offline_iThemba/input_files/gain_shift_si2.dat
 
 range /Users/hannahcb/progg/Offline_iThemba/input_files/zrange_d.dat
 
@@ -58,4 +58,4 @@ data directory /Volumes/PR271/PR271A
 
 data file R1_0
 
-export root /Users/hannahcb/progg/Offline_iThemba/output_files/Ra226_r1_dE_fourthcal.root
+export root /Users/hannahcb/progg/Offline_iThemba/output_files/Ra226_r1_dE_fifthhcal.root

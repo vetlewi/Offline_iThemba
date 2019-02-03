@@ -10,28 +10,37 @@ void tegne1(){
     // f->ls();
     gStyle->SetPalette(1);
 
-    energy_clover_01A->GetXaxis()->CenterTitle();
-	energy_clover_01A->SetTitle("Clover_01");
-    energy_clover_01A->SetLineColor(1);
-    energy_clover_01A->Draw("");
-    energy_clover_01B->SetLineColor(2);
-    energy_clover_01C->SetLineColor(3);
-    energy_clover_01D->SetLineColor(4);
-    energy_clover_01B->Draw("same");
-    energy_clover_01C->Draw("same");
-    energy_clover_01D->Draw("same");
+ //    energy_clover_01A->GetXaxis()->CenterTitle();
+	// energy_clover_01A->SetTitle("Clover_01");
+ //    energy_clover_01A->SetLineColor(1);
+ //    energy_clover_01A->Draw("");
+ //    energy_clover_01B->SetLineColor(2);
+ //    energy_clover_01C->SetLineColor(3);
+ //    energy_clover_01D->SetLineColor(4);
+ //    energy_clover_01B->Draw("same");
+ //    energy_clover_01C->Draw("same");
+ //    energy_clover_01D->Draw("same");
 
 
 
-    // energy_clover_02A->SetTitle("Clover_02");
-    // energy_clover_02A->SetLineColor(1);
-    // energy_clover_02A->Draw("");
-    // energy_clover_02B->SetLineColor(2);
-    // energy_clover_02C->SetLineColor(3);
-    // energy_clover_02D->SetLineColor(7);
-    // energy_clover_02B->Draw("same");
-    // energy_clover_02C->Draw("same");
-    // energy_clover_02D->Draw("same");
+    energy_clover_raw_02A->SetTitle("Clover_02");
+    energy_clover_raw_02A->SetLineColor(1);
+    energy_clover_raw_02A->Draw("");
+    energy_clover_02A->SetLineColor(2);
+    // energy_clover_raw_02C->SetLineColor(3);
+    // energy_clover_raw_02D->SetLineColor(4);
+    energy_clover_02A->Draw("same");
+    // energy_clover_raw_02C->Draw("same");
+    // energy_clover_raw_02D->Draw("same");
+
+
+   auto legend = new TLegend(0.7,0.7,0.9,0.9); //x1, y1,x2.y2
+   // legend->SetTLegendFont(20);
+   // legend->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+   legend->AddEntry(energy_clover_raw_02A,"Raw input","l");
+   legend->AddEntry(energy_clover_02A,"Calibrated","l");
+   // legend->AddEntry("gr","Graph with error bars","lep");
+   legend->Draw();
 //
 //
     // energy_clover_03A->SetTitle("Clover_03");

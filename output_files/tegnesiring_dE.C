@@ -1,8 +1,8 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TColor.h"
-void tegnesisect_dE(){
-    TFile *f = TFile::Open("Ra226_r1_dE_fcal.root");
+void tegnesiring_dE(){
+    TFile *f = TFile::Open("Ra226_r1_dE_fifthhcal.root");
     if (f==0){
         printf("Error: cannot open file");
         return;
@@ -10,41 +10,41 @@ void tegnesisect_dE(){
     // f->ls();
     gStyle->SetPalette(1);
 
-    energy_dE_sect_00->GetXaxis()->CenterTitle();
-	energy_dE_sect_00->SetTitle("dE-sect");
+    energy_dE_ring_00->GetXaxis()->CenterTitle();
+	energy_dE_ring_00->SetTitle("dE-ring");
 
-    energy_dE_sect_00->SetLineColor(1);
-    energy_dE_sect_00->Draw("");
-    energy_dE_sect_01->SetLineColor(2);
-    energy_dE_sect_02->SetLineColor(3);
-    energy_dE_sect_03->SetLineColor(4);
-    energy_dE_sect_04->SetLineColor(5);
-    energy_dE_sect_05->SetLineColor(6);
-    energy_dE_sect_06->SetLineColor(7);
-    energy_dE_sect_07->SetLineColor(8);
-    energy_dE_sect_08->SetLineColor(9);
-    energy_dE_sect_09->SetLineColor(10);
-    energy_dE_sect_10->SetLineColor(11);
-    energy_dE_sect_11->SetLineColor(12);
-    energy_dE_sect_12->SetLineColor(13);
-    energy_dE_sect_13->SetLineColor(14);
-    energy_dE_sect_14->SetLineColor(15);
-    energy_dE_sect_15->SetLineColor(0);
+    energy_dE_ring_00->SetLineColor(1);
+    energy_dE_ring_00->Draw("");
+    energy_dE_ring_01->SetLineColor(2);
+    energy_dE_ring_02->SetLineColor(3);
+    energy_dE_ring_03->SetLineColor(4);
+    energy_dE_ring_04->SetLineColor(5);
+    energy_dE_ring_05->SetLineColor(6);
+    energy_dE_ring_06->SetLineColor(7);
+    energy_dE_ring_07->SetLineColor(8);
+    energy_dE_ring_08->SetLineColor(9);
+    energy_dE_ring_09->SetLineColor(10);
+    energy_dE_ring_10->SetLineColor(11);
+    energy_dE_ring_11->SetLineColor(12);
+    energy_dE_ring_12->SetLineColor(13);
+    energy_dE_ring_13->SetLineColor(14);
+    energy_dE_ring_14->SetLineColor(15);
+    energy_dE_ring_15->SetLineColor(0);
 
-    energy_dE_sect_02->Draw("same");
-    energy_dE_sect_03->Draw("same");
-    energy_dE_sect_04->Draw("same");
-    energy_dE_sect_05->Draw("same");
-    energy_dE_sect_06->Draw("same");
-    energy_dE_sect_07->Draw("same");
-    energy_dE_sect_08->Draw("same");
-    energy_dE_sect_09->Draw("same");
-    energy_dE_sect_10->Draw("same");
-    energy_dE_sect_11->Draw("same");
-    energy_dE_sect_12->Draw("same");
-    energy_dE_sect_13->Draw("same");
-    energy_dE_sect_14->Draw("same");
-    energy_dE_sect_15->Draw("same");
+    energy_dE_ring_02->Draw("same");
+    energy_dE_ring_03->Draw("same");
+    energy_dE_ring_04->Draw("same");
+    energy_dE_ring_05->Draw("same");
+    energy_dE_ring_06->Draw("same");
+    energy_dE_ring_07->Draw("same");
+    energy_dE_ring_08->Draw("same");
+    energy_dE_ring_09->Draw("same");
+    energy_dE_ring_10->Draw("same");
+    energy_dE_ring_11->Draw("same");
+    energy_dE_ring_12->Draw("same");
+    energy_dE_ring_13->Draw("same");
+    energy_dE_ring_14->Draw("same");
+    energy_dE_ring_15->Draw("same");
 
     // energy_clover_01D->SetLineColor(4);
     // energy_clover_01B->Draw("same");
