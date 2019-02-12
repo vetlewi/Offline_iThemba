@@ -2,9 +2,9 @@
 
 void GetPeaks()
 {
-	TFile *file = TFile::Open("Test.root");
+	TFile *file = TFile::Open("r127_time.root");
 
-	TH2 *m = (TH2 *)file->Get("align_time_de_sect");
+	TH2 *m = (TH2 *)file->Get("align_time_de_ring");
 
 	TSpectrum spec;
 
@@ -13,7 +13,7 @@ void GetPeaks()
 	double peakPos[1024];
 
 
-	for (int i = 1 ; i < 17 ; ++i ){
+	for (int i = 1 ; i < 49 ; ++i ){
 		sprintf(tmp, "px_%d", i);
 		TH1 *h = m->ProjectionX(tmp, i, i);
 		h->Draw();
@@ -24,7 +24,7 @@ void GetPeaks()
 
 		double param[3] = {200., spec.GetPositionX()[0], 1.0};
 		TF1 *fit = new TF1("total","gaus(0)",spec.GetPositionX()[0]-10,spec.GetPositionX()[0]+10.0);
-		
+
 		for (Int_t k=0; k<3; k++) {
         fit->SetParameter(k, param[k]);
     }
@@ -35,13 +35,13 @@ void GetPeaks()
 
 	}
 	int n = 1;
-	for (int i = 0 ; i < 16 ; ++i){
+	for (int i = 0 ; i < 48 ; ++i){
 		if ( i / 8 == n ){
 			cout << '\\' << endl;
 			++n;
 		}
 		cout << -peakPos[i] << "\t";
-		
+
 	}
 
 	cout << endl;
