@@ -1,8 +1,8 @@
 
 
-void GetPeaks_LaBr()
+void GetPeaks_LaBr(string rname)
 {
-	TFile *file = TFile::Open("Si_calib.root");
+	TFile *file = TFile::Open(rname.c_str());
 
 	TH2 *m = (TH2 *)file->Get("align_time_clover_09");
 
@@ -15,7 +15,7 @@ void GetPeaks_LaBr()
 
 	for (int i = 1 ; i < 5 ; ++i ){
 		sprintf(tmp, "px_%d", i);
-		TH1 *h = m->ProjectionX(tmp, i, i);
+		TH1 *h = m->ProjectionX(tmp, i, i)->Rebin(2);
 		h->Draw();
 		spec.Search(h);
 		int n_peaks = spec.GetNPeaks();
@@ -24,7 +24,7 @@ void GetPeaks_LaBr()
 
 		double param[3] = {200., spec.GetPositionX()[0], 1.0};
 		TF1 *fit = new TF1("total","gaus(0)",spec.GetPositionX()[0]-4.0,spec.GetPositionX()[0]+1.5);
-		
+
 		for (Int_t k=0; k<3; k++) {
         fit->SetParameter(k, param[k]);
     }
